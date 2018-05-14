@@ -1,32 +1,51 @@
-<!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://lpcdn-a.lpsnmedia.net/unifiedwindow/widgetSDK.min.js"></script>
+</head>
+<body>
+<h1>Test Widget</h1>
+<script type="text/javascript">
+  (function () {
+      var lpWidgetSDK,
+          widgetSDKAPI = lpTag.LPWidgetSDK.API;
+      window.addEventListener("load", function () {
+          var bindingEvent = [widgetSDKAPI.events.CONVERSATION_INFO, widgetSDKAPI.events.MESSAGES],
+                  opts = {bind: {}};
 
-	<head>
-		<title>JSON Test</title>
-		
-		<script>
-			function jsDropDown(imgid, jsid, folder, newimg) {
-				document.getElementById(imgid).src = "./" + folder + "/" + newimg + ".jpg";
-				document.getElementById(jsid).src = "./" + newimg + ".html";				
-			}
-		</script>
-	</head>
+          bindingEvent.forEach(function (eventName) {
+              opts.bind[eventName] = {func: _onEvent, context: this};
+          });
 
-	<body>
-		<table border="0" cellspacing="3" cellpadding="3">
-			<tr>
-				<td>
-					<strong>Choose a Template:</strong> <select name="food" onChange="jsDropDown('rm', 'nosj', 'pics', this.value)">
-							<option value="freebet">Freebet</option>
-							<option value="euro">Eurovision</option>
-							<option value="bet">Bet</option>
-						   </select>
-				</td>
-				<td>
-					<iframe height="300" src="./freebet.html" id="nosj"></iframe>
-				</td>
-				<td>
-					<img src = "./pics/freebet.jpg" id="rm"></img>
-				</td>
-	</body>
-</html>
+          lpWidgetSDK = lpTag.LPWidgetSDK.init(opts);
+      }.bind(this));
+
+      function _onEvent(eventData) {
+          if (eventData && widgetSDKAPI.events.MESSAGES === eventData.type) {
+              var content =  eventData.data.content = "";
+              console.log("MESSAGES data: ", eventData );
+              if (content.indexOf("disposeWidget") > -1) {
+                  disposeWidget();
+              }
+          } else if (eventData && widgetSDKAPI.events.CONVERSATION_INFO === eventData.type) {
+              console.log("CONVERSATION_INFO data: ", eventData );
+          }
+          sendNotification("Event received!");
+      }
+      function sendNotification(text) {
+          if (typeof text === "string") {
+              lpWidgetSDK.notify({content: text}, function (err) {
+                  if (err) {
+                      console.log("Error on sending notification from widget");
+                  }
+              });
+          }
+      }
+      function disposeWidget() {
+          lpWidgetSDK.dispose(function (data) {
+              console.log("bla");
+          });
+      }
+  })();
+</script>
+</body>
