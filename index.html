@@ -7,6 +7,12 @@
 		<link rel="stylesheet" href="css/example2.css">
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script>
+			function jsDropDown(imgid, jsid, folder, newimg) {
+				document.getElementById(imgid).src = "./" + folder + "/" + newimg + ".jpg";
+				document.getElementById(jsid).src = "./" + newimg + ".html";				
+			}
+		</script>
 		<style>
 			/* centered columns styles */
 
