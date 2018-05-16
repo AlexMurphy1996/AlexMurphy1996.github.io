@@ -31,22 +31,22 @@
 	<body style="">
 		<!-- Start of Container -->
 		<div class="container">
-			<!-- Start of Agent Chat Area -->
-			<div class="row row-centered">
-				<div class="col-md-4 col-centered"></div>
-				<div class="col-md-4 col-centered">
-					<div translate="no">
-						<h2>Agent Response</h2>
-						<textarea id="agentChat" rows="5" class="commandInput"></textarea>
-						<br>
-						<br>
-						<button type="button" class="btn btn-block btn-default" onclick="translateChat()">Translate Message</button>
-					</div>
-					<div id="agentChatTranslated" style="display: none;"></div>
-				</div>
-				<div class="col-md-4 col-centered"></div>
-			</div>
-			<!-- Start of Agent Chat Area -->
+			<table border="0" cellspacing="3" cellpadding="3">
+			<tr>
+				<td>
+					<strong>Choose a Template:</strong> <select name="food" onChange="jsDropDown('rm', 'nosj', 'pics', this.value)">
+							<option value="freebet">Freebet</option>
+							<option value="euro">Eurovision</option>
+							<option value="bet">Bet</option>
+						   </select>
+				</td>
+				<td>
+					<iframe height="300" src="./freebet.html" id="nosj"></iframe>
+				</td>
+				<td>
+					<img src = "./pics/freebet.jpg" id="rm"></img>
+				</td>
+			</tr>
 		</div>
 		<!-- End of Container -->
 		<script>
@@ -101,20 +101,8 @@
 			//path to the chat transcript from the sdk
 			var pathToData = "chatTranscript";
 			//bin the chat transcript so it will listen for new chatlines
-			SDK.bind(pathToData, updateCallback, notifyWhenDone);
-			//translate the agents message
-			function translateChat() {
-				//update the hidden div
-				document.getElementById('agentChatTranslated').innerHTML = document.getElementById('agentChat').value;
-				//transalte the agents message
-				if (skill == "Spanish") {
-					Microsoft.Translator.Widget.Translate('en', 'es', onProgress, onError, onComplete, onRestoreOriginal);
-				} else if (skill == "Russian") {
-					Microsoft.Translator.Widget.Translate('en', 'ru', onProgress, onError, onComplete, onRestoreOriginal);
-				} else {
-					Microsoft.Translator.Widget.Translate('en', 'it', onProgress, onError, onComplete, onRestoreOriginal);
-				}
-			}
+			SDK.bind(pathToData, updateCallback, notifyWhenDone); 
+			
 			//called when the translation is complete
 			function onComplete() {
 				//alert("Done");
