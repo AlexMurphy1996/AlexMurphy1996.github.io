@@ -53,6 +53,8 @@
 					<img src = "./pics/freebet.JPG" id="rm"></img>
 				</td>
 			</tr>
+			<button type="button" class="btn btn-block btn-default" onclick="sendContent()">Send Content</button>
+
 		</div>
 		<!-- End of Container -->
 		<script>
@@ -82,14 +84,6 @@
 					//update the hidden div with the visitors chat line
 					document.getElementById('visitorChat2').innerHTML = chatLine;
 					//translate the visitors chat line based on skill group
-
-					if (skill == "Spanish") {
-						Microsoft.Translator.Widget.Translate('es', 'en', onProgress, onError, onComplete2, onRestoreOriginal);
-					} else if (skill == "Russian") {
-						Microsoft.Translator.Widget.Translate('ru', 'en', onProgress, onError, onComplete2, onRestoreOriginal);
-					} else {
-						Microsoft.Translator.Widget.Translate('it', 'en', onProgress, onError, onComplete2, onRestoreOriginal);
-					}
 				}
 			};
 			var notifyWhenDone = function(err) {
@@ -108,28 +102,18 @@
 			var pathToData = "chatTranscript";
 			//bin the chat transcript so it will listen for new chatlines
 			SDK.bind(pathToData, updateCallback, notifyWhenDone); 
+	
+			function sendContent() {
+				var notifyWhenDone = function(err) {
+					// Do something with the error
+				}	
+				
+				var cmdName = lptag.agentSDK.writeSC;
+				var data = {"type":"vertical","elements":[{"type":"image","url":"http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG","tooltip":"image tooltip"},{"type":"text","text":"How do you want to place your bet?","tooltip":"text tooltip"},{"type":"button","title":"Win","click":{"actions":[{"type":"publishText","text":"Win"}]}},{"type":"button","title":"Each Way","click":{"actions":[{"type":"publishText","text":"Each Way"}]}},{"type":"button","title":"Cancel","click":{"actions":[{"type":"publishText","text":"Cancel"}]}}]}
+				
+				lpTag.agentSDK.command(cmdName, data, notifyWhenDone);						       
+			}
 			
-			//called when the translation is complete
-			function onComplete() {
-				//alert("Done");
-				//get the translated text
-				var translation = document.getElementById('agentChatTranslated').innerHTML;
-				var data = {
-					text: translation
-				};
-				//send the translation to the agent console
-				SDK.command('Write ChatLine', data);
-				//close the translation widget
-				$('#WidgetCloseImage').trigger("click");
-			}
-			//called when the translation is complete
-			function onComplete2() {
-				//alert("Done");
-				//update the text area with the translation
-				document.getElementById('visitorChat').value = document.getElementById('visitorChat2').innerHTML;
-				//close the translation widget
-				$('#WidgetCloseImage').trigger("click");
-			}
 			//called while the translation is in progress
 			function onProgress(value) {
 
