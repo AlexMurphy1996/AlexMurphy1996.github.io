@@ -46,22 +46,28 @@
 				}
 				  
 				function writeCommand() {
+					
+				var ddl = document.getElementById("template");
+				var selectedOption = ddl.options[ddl.selectedIndex];
+				var content = selectedOption.getAttribute("x");
 				  
 				var commandVal = $(".commandInput").val();
-				var data = {
-					json: {
-						"type": "map",
-					  	"la": 40.75620,
-					  	"lo": -73.99861,
-						"click": {
-							"actions": [{
-								"type": "navigate",
-								"la": 40.75620,
-								"lo": -73.99861,
-								}]
+				
+				var data = {};
+				
+				if {content == "1") {
+					data = {
+						json: {
+							"type": "text",
+							"text": "product name",
+							"tooltip": "text tooltip",
+							"style": {
+								"bold": true,
+								"size": "large"
 							}
+						}	
 					}
-				};
+					
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
 				  
 				}
@@ -146,32 +152,30 @@
 		
 		<body style="word-break: break-word">
 				<h1>Structured Content</h1>
+			
+				<table border="0" cellspacing="3" cellpadding="3">
+					<tr>
+						<td>
+							<strong>Choose a Template:</strong> 
+							           <select id="template">
+									<option json="1" value="freebet">Freebet</option>
+									<option json="2" value="euro">Eurovision</option>
+									<option json="3" value="bet">Bet</option>
+								   </select>
+						</td>
+						<td>
+							<iframe height="300" src="./freebet.html" id="nosj"></iframe>
+						</td>
+						<td>
+							<img src = "./pics/freebet.jpg" id="rm"></img>
+						</td>
+					</tr>
+	    			</table>
+			
 				<div class="commandBox">
-				  
-						<input class="commandInput" type="text" name="commandInput" />
 
 						<button class="commandButton" onclick="writeCommand()" title="Write">Write</button>
 
-				</div>
-
-				<div class="getBox">
-				  
-						<input class="getInput" type="text" name="getInput" />
-				  
-						<button class="getButton" onclick="get()" title="Write">Get</button>
-				  
-						<div class="getResults"></div>
-				  
-				</div>
-				  
-				<div class="bindBox">
-				  
-						<input class="bindInput" type="text" name="bindInput" />
-				  
-						<button class="bindButton" onclick="bind()" title="bind">Bind</button><button class="unbindButton" onclick="unbind()" title="bind">Unbind</button>
-				  
-						<div class="bindResults"></div>
-				  
 				</div>
 						  
 		</body>
