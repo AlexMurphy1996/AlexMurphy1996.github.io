@@ -48,20 +48,27 @@
 				function writeCommand() {
 				  
 				var commandVal = $(".commandInput").val();
-				var data = {
-					json: {
-						"type": "map",
-					  	"la": 40.75620,
-					  	"lo": -73.99861,
-						"click": {
-							"actions": [{
-								"type": "navigate",
-								"la": 40.75620,
-								"lo": -73.99861,
-								}]
-							}
-					}
-				};
+				
+				var ddl = document.getElementById("sc");
+				var selectedOption = ddl.options[ddl.selectedIndex];
+				var templateValue = selectedOption.getAttribute("x");
+				
+				if (templateValue == "1") {					
+					var data = {
+						json: {
+							"type": "map",
+							"la": 40.75620,
+							"lo": -73.99861,
+							"click": {
+								"actions": [{
+									"type": "navigate",
+									"la": 40.75620,
+									"lo": -73.99861,
+									}]
+								}
+						}
+					};
+				}
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
 				  
 				}
@@ -150,11 +157,12 @@
 				<table border="0" cellspacing="3" cellpadding="3">
 					<tr>
 						<td>
-							<strong>Choose a Template:</strong> <select name="food" onChange="jsDropDown('rm', 'nosj', 'pics', this.value)">
-									<option data-mail="1" value="freebet">Freebet</option>
-									<option value="euro">Eurovision</option>
-									<option value="bet">Bet</option>
-								   </select>
+							<strong>Choose a Template:</strong> 
+							<select id="sc" onChange="writeCommand()">
+								<option template="1" value="freebet">Freebet</option>
+								<option template="2" value="euro">Eurovision</option>
+								<option template="3" value="bet">Bet</option>
+							</select>
 						</td>
 						<td>
 							<iframe height="300" src="./freebet.html" id="nosj"></iframe>
