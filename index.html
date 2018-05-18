@@ -1,182 +1,172 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Translate Widget Example</title>
-		<script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
-		<link rel="stylesheet" href="css/bootstrap-slate.min.css">
-		<link rel="stylesheet" href="css/example2.css">
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script>
-			function jsDropDown(imgid, jsid, folder, newimg) {
-				document.getElementById(imgid).src = "./" + folder + "/" + newimg + ".JPG";
-				document.getElementById(jsid).src = "./" + newimg + ".html";				
-			}
-		</script>
-		<style>
-			/* centered columns styles */
+    <!DOCTYPE html>
 
-			.row-centered {
-				text-align: center;
-			}
+    <html>
+		<head>
 
-			.col-centered {
-				display: block;
-				margin-left: auto;
-				margin-right: auto;
-				text-align: center;
-			}
+				<meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
 
-			.LTRStyle {
-				display: none !important;
-			}
-		</style>
-		<script type="text/javascript" charset="utf-8" src="https://ssl.bing.com/widget/metrics.js"></script>
-		<style type="text/css"></style>
-	</head>
-	<body style="">
-		<!-- Start of Container -->
-		<div class="container">
-			<table border="0" cellspacing="3" cellpadding="3">
-			<tr>
-				<td>
-					<strong>Choose a Template:</strong> <select name="food" onChange="jsDropDown('rm', 'nosj', 'pics', this.value)">
-							<option value="freebet">Freebet</option>
-							<option value="euro">Eurovision</option>
-							<option value="bet">Bet</option>
-						   </select>
-				</td>
-				<td>
-					<iframe height="300" src="./freebet.html" id="nosj"></iframe>
-				</td>
-				<td>
-					<img src = "./pics/freebet.JPG" id="rm"></img>
-				</td>
-			</tr>
-			<button type="button" class="btn btn-block btn-default" onclick="sendContent()">Send Content</button>
+				<title>LivePerson SDK client example 1</title>
 
-		</div>
-		<!-- End of Container -->
-		<script>
-			var skill;
-			var SDK = lpTag.agentSDK;
-			SDK.init();
-			//success function for getting the engagement info from the sdk
-			var onSuccess = function(data) {
-				//if the skill is not set, it will be a null value, not unskilled
-				skill = data.skill;
-				console.log(skill);
-			};
-			//error is called if we are not able to get the engagement infor from the sdk
-			var onError = function(err) {
-				// Do something with the error
-				console.log(err);
-			};
-			var updateCallback = function(data) {
-				// called each time the value is updated; if there is an existing value when bind
-				//is called - this callback will be called with the existing value
-				//console.log(data.newValue);
-				//strip the html elements from the chat line
-				var chatLine = data.newValue.lines[0].text.replace(/(<p[^>]*>|<\/p>)/g, "");
-				//console.log(chatLine);
-				//add new chat line to page if it is from the visitor
-				if (data.newValue.lines[0].source == 'visitor') {
-					//update the hidden div with the visitors chat line
-					document.getElementById('visitorChat2').innerHTML = chatLine;
-					//translate the visitors chat line based on skill group
+				<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+				<script src="../../node_modules/client-SDK/dist/client-SDK.js"></script>
+
+				<script type="text/javascript">
+
+				var SDK = lpTag.agentSDK || {};
+
+				$(function() {
+
+				SDK.init({
+
+				notificationCallback: getLogFunction('INFO', 'Notification received!'),
+
+				visitorFocusedCallback: getLogFunction('INFO', 'Visitor Focused received!'),
+
+				visitorBlurredCallback: getLogFunction('INFO', 'Visitor Blurred received!')
+
+				});
+
+				});
+				  
+				function getLogFunction(type, message){
+				  
+				return function(data) {
+				  
+				if (typeof data === 'object') {
+				  
+				data = JSON.stringify(data, null, 2);
+				  
 				}
-			};
-			var notifyWhenDone = function(err) {
-				if (err) {
-					// Do something with the error
+				  
+				logger(type, message + ' The ' + type + ' data: ' + data);
+				  
 				}
-				// called when the bind is completed successfully,
-				// or when the action terminated with an error
-			};
+				  
+				}
+				  
+				function writeCommand() {
+				  
+				var commandVal = $(".commandInput").val();
+				  
+				SDK.command('Write ChatLine',{text:commandVal}, createCallback('Write'));
+				  
+				}
+				  
+				function get() {
+				  
+				var getKey = $(".getInput").val();
+				  
+				SDK.get(getKey, getSuccess, getLogFunction('ERROR', 'Error in get!'));
+				  
+				}
+				  
+				function bind() {
 
-			//path to the engagementInfo from the sdk
-			var pathToEngagementInfo = "engagementInfo";
-			SDK.get(pathToEngagementInfo, onSuccess, onError);
+				var bindKey = $(".bindInput").val();
+				  
+				SDK.bind(bindKey, bindSuccess, createCallback('Bind'));
+				  
+				}
 
-			//path to the chat transcript from the sdk
-			var pathToData = "chatTranscript";
-			//bin the chat transcript so it will listen for new chatlines
-			SDK.bind(pathToData, updateCallback, notifyWhenDone); 
-	
-			function sendContent() {
-				var notifyWhenDone = function(err) {
-					// Do something with the error
-				};	
-				
-				var cmdName = lptag.agentSDK.writeSC;
-				var data ={
-					  "type": "vertical",
-					  "elements": [
-					    {
-					      "type": "image",
-					      "url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG",
-					      "tooltip": "image tooltip"
-					    },
-					    {
-					      "type": "text",
-					      "text": "How do you want to place your bet?",
-					      "tooltip": "text tooltip"
-					    },
-					    {
-					      "type": "button",
-					      "title": "Win",
-					      "click": {
-						"actions": [
-						  {
-						    "type": "publishText",
-						    "text": "Win"
-						  }
-						]
-					      }
-					    },
-					    {
-					      "type": "button",
-					      "title": "Each Way",
-					      "click": {
-						"actions": [
-						  {
-						    "type": "publishText",
-						    "text": "Each Way"
-						  }
-						]
-					      }
-					    },
-					    {
-					      "type": "button",
-					      "title": "Cancel",
-					      "click": {
-						"actions": [
-						  {
-						    "type": "publishText",
-						    "text": "Cancel"
-						  }
-						]
-					      }
-					    }
-					  ]
-					};
-				
-				lpTag.agentSDK.command(cmdName, data, notifyWhenDone);						       
-			}
-			
-			//called while the translation is in progress
-			function onProgress(value) {
+				function unbind() {
 
-			}
-			//called if there is an error translating
-			function onError(error) {
-				alert("Translation Error: " + error);
-			}
-			//called when the widget is closed
-			function onRestoreOriginal() {
-				//alert("The page was reverted to the original language. This message is not part of the widget.");
-			}
+				clearLogger();
 
-		</script>
-	</body>
-</html>
+				var bindKey = $(".bindInput").val();
+				  
+				SDK.unbind(bindKey, bindSuccess, createCallback('Unbind'));
+				  
+				}
+				  
+				function createCallback(name) {
+				  
+				return function(error) {
+				  
+				if (error) {
+				  
+				getLogFunction('ERROR', 'Error in ' + name + '!')(error);
+				  
+				} else {
+				  
+				getLogFunction('INFO', name + ' success!')();
+
+				}  
+				  
+				} 
+
+				}
+				  
+				function getSuccess(data){
+				  
+				$(".getResults").html(JSON.stringify(data));
+				  
+				getLogFunction('INFO', 'Get success!')(data);
+				  
+				}
+				  
+				function bindSuccess(data){
+				  
+				$(".bindResults").html(JSON.stringify(data)); 
+
+				getLogFunction('INFO', 'Bind success!')(data); 
+
+				}
+				  
+				function logger(type, text){
+				  
+				if (typeof text === 'object') {
+				  
+				text = JSON.stringify(text, null, 2);
+				  
+				}
+				  
+				var area = $(".logBox textarea");  
+
+				area.val(new Date().toTimeString() + ": " + type + " - " + text + '\n' + area.val());  
+
+				}
+
+				</script>
+		  
+		</head> 
+		
+		<body style="word-break: break-word">
+		  
+				<div class="commandBox">
+				  
+						<input class="commandInput" type="text" name="commandInput" />
+
+						<button class="commandButton" onclick="writeCommand()" title="Write">Write</button>
+
+				</div>
+
+				<div class="getBox">
+				  
+						<input class="getInput" type="text" name="getInput" />
+				  
+						<button class="getButton" onclick="get()" title="Write">Get</button>
+				  
+						<div class="getResults"></div>
+				  
+				</div>
+				  
+				<div class="bindBox">
+				  
+						<input class="bindInput" type="text" name="bindInput" />
+				  
+						<button class="bindButton" onclick="bind()" title="bind">Bind</button><button class="unbindButton" onclick="unbind()" title="bind">Unbind</button>
+				  
+						<div class="bindResults"></div>
+				  
+				</div>
+				  
+				<div class="logBox">
+				  
+						<textarea disabled style="width: 100%; height: 200px;"></textarea>
+				  
+				</div>
+		  
+		</body>
+      
+    </html>
