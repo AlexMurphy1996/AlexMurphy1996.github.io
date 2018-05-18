@@ -50,8 +50,20 @@
 				var commandVal = $(".commandInput").val();
 				var data = {
 					json: {
-					  "type": "image",
-					  "url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG"
+						"type": "image",
+						"url": "https://cdn.bgr.com/2016/08/iphone-8-concept.jpg?quality=98&strip=all",
+						"caption": "This is an example of image caption",
+						"click": {
+							"metadata": [{
+							}],
+					    "actions": [{
+					      "type": "link",
+					      "name": "Add to cart",
+					      "uri": "https://www.example.com"
+							}]
+						},
+						"tooltip": "image tooltip",
+						"rtl" : true
 					}
 				};
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
