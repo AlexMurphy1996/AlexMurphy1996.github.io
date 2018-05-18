@@ -55,18 +55,7 @@
 				
 				if (templateValue == "1") {					
 					var data = {
-						json: {
-							"type": "map",
-							"la": 40.75620,
-							"lo": -73.99861,
-							"click": {
-								"actions": [{
-									"type": "navigate",
-									"la": 40.75620,
-									"lo": -73.99861,
-									}]
-								}
-						}
+						json: {"type":"map","la":40.7562,"lo":-73.99861,"click":{"actions":[{"type":"navigate","la":40.7562,"lo":-73.99861}]}}
 					};
 				}
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
