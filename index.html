@@ -75,31 +75,7 @@
 				  
 				}
 				  
-				function get() {
-				  
-				var getKey = $(".getInput").val();
-				  
-				SDK.get(getKey, getSuccess, getLogFunction('ERROR', 'Error in get!'));
-				  
-				}
-				  
-				function bind() {
-
-				var bindKey = $(".bindInput").val();
-				  
-				SDK.bind(bindKey, bindSuccess, createCallback('Bind'));
-				  
-				}
-
-				function unbind() {
-
-				clearLogger();
-
-				var bindKey = $(".bindInput").val();
-				  
-				SDK.unbind(bindKey, bindSuccess, createCallback('Unbind'));
-				  
-				}
+				
 				  
 				function createCallback(name) {
 				  
