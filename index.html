@@ -50,15 +50,19 @@
 				var commandVal = $(".commandInput").val();
 				var data = {
 					json: {
-						"type": "text",
-						"text": "product name",
-						"tooltip": "text tooltip",
-						"style": {
-							"bold": true,
-							"size": "large"
-						}
+						"type": "vertical",
+						"elements": [
+							{
+								"type": "image",
+						      		"url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG"
+							},
+							{
+								"type":"text",
+								"text":"How do you place your bet?"
+							}
+						]
 					}
-				};  
+				};
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
 				  
 				}
