@@ -50,14 +50,56 @@
 				var commandVal = $(".commandInput").val();
 				var data = {
 					json: {
-						"type": "text",
-						"text": "product name",
-						"tooltip": "text tooltip",
-						"style": {
-							"bold": true,
-							"size": "large"
-						}
-					},
+					  "type": "vertical",
+					  "elements": [
+					    {
+					      "type": "image",
+					      "url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG",
+					      "tooltip": "image tooltip"
+					    },
+					    {
+					      "type": "text",
+					      "text": "How do you want to place your bet?",
+					      "tooltip": "text tooltip"
+					    },
+					    {
+					      "type": "button",
+					      "title": "Win",
+					      "click": {
+						"actions": [
+						  {
+						    "type": "publishText",
+						    "text": "Win"
+						  }
+						]
+					      }
+					    },
+					    {
+					      "type": "button",
+					      "title": "Each Way",
+					      "click": {
+						"actions": [
+						  {
+						    "type": "publishText",
+						    "text": "Each Way"
+						  }
+						]
+					      }
+					    },
+					    {
+					      "type": "button",
+					      "title": "Cancel",
+					      "click": {
+						"actions": [
+						  {
+						    "type": "publishText",
+						    "text": "Cancel"
+						  }
+						]
+					      }
+					    }
+					  ]
+					}
 				};
 				  
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
