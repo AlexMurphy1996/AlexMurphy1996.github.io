@@ -50,20 +50,16 @@
 				var commandVal = $(".commandInput").val();
 				var data = {
 					json: {
-						"type": "image",
-						"url": "https://ibhuluimcom-a.akamaihd.net/ib.huluim.com/show/22881?region=US&size=952x536",
-						"caption": "This is an example of image caption",
+						"type": "map",
+					  	"la": 40.75620,
+					  	"lo": -73.99861,
 						"click": {
-							"metadata": [{
-							}],
-					    "actions": [{
-					      "type": "link",
-					      "name": "Add to cart",
-					      "uri": "https://www.example.com"
-							}]
-						},
-						"tooltip": "image tooltip",
-						"rtl" : true
+							"actions": [{
+								"type": "navigate",
+								"la": 40.75620,
+								"lo": -73.99861,
+								}]
+							}
 					}
 				};
 				SDK.command('Write StructuredContent', data, createCallback('Write'));
