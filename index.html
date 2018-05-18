@@ -151,14 +151,16 @@
 		  
 		</head> 
 		
+	    
 		<body style="word-break: break-word">
 				<h1>Structured Content</h1>
 			
+				<div class="commandBox">
 				<table border="0" cellspacing="3" cellpadding="3">
 					<tr>
 						<td>
 							<strong>Choose a Template:</strong> 
-							<select id="sc" onChange="writeCommand()">
+							<select id="sc">
 								<option template="1" value="freebet">Freebet</option>
 								<option template="2" value="euro">Eurovision</option>
 								<option template="3" value="bet">Bet</option>
@@ -172,10 +174,6 @@
 						</td>
 					</tr>
 				</table>
-
-				<div class="commandBox">
-				  
-						<input class="commandInput" type="text" name="commandInput" />
 
 						<button class="commandButton" onclick="writeCommand()" title="Write">Write</button>
 
