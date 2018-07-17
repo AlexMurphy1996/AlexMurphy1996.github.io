@@ -1,0 +1,81 @@
+//Full place a bet strucured content
+
+{
+  "type": "vertical",
+  "elements": [
+    {
+      "type": "image",
+      "url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG",
+      "tooltip": "image tooltip"
+    },
+    {
+      "type": "text",
+      "text": "How do you want to place your bet?",
+      "tooltip": "text tooltip"
+    },
+    {
+      "type": "button",
+      "title": "Win",
+      "click": {
+        "actions": [
+          {
+            "type": "publishText",
+            "text": "Win"
+          }
+        ]
+      }
+    },
+    {
+      "type": "button",
+      "title": "Each Way",
+      "click": {
+        "actions": [
+          {
+            "type": "publishText",
+            "text": "Each Way"
+          }
+        ]
+      }
+    },
+    {
+      "type": "button",
+      "title": "Cancel",
+      "click": {
+        "actions": [
+          {
+            "type": "publishText",
+            "text": "Cancel"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+// Just the Image
+
+{
+    "type": "image",
+    "url": "http://assets.cdnbf.net/ssw/%20Horse%20Racing/%20BackgroundImage440x170/Betting.betfair_banner.JPG",
+}
+
+// Example from developer website
+
+{
+	"type": "image",
+	"url": "https://cdn.bgr.com/2016/08/iphone-8-concept.jpg?quality=98&strip=all",
+	"caption": "This is an example of image caption",
+	"click": {
+		"metadata": [{
+	        }],
+    "actions": [{
+      "type": "link",
+      "name": "Add to cart",
+      "uri": "https://www.example.com"
+		}]
+	},
+	"tooltip": "image tooltip",
+	"rtl" : true
+}
+
+
