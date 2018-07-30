@@ -43,6 +43,18 @@
 		SDK.init();
 				
 		function onClick1() {
+			var data = {text: "To verify your account, we need to confirm your age and address. To do this, you need to send us a a copy of two documents – \n • Verify your age: Passport (both pages) or driver licence that's in date \n • Verify your address: Utility Bill (electricity, gas, phone bill), Tax Bill or Bank Statement.\n Make sure that the uploaded copy is less than 6 months old and shows your name, your address and the Logo of the 3rd party company."};
+			SDK.command('Write ChatLine', data);
+		}
+		
+		function onClick2() {
+			var data = {
+				text: "La lala lalalalalaaa"
+			};
+			SDK.command('Write ChatLine', data);
+		}
+		
+		function onClick3() {
 			var data = {text: "La lala lalalalalaaa"};
 			SDK.command('Write ChatLine', data);
 		}
