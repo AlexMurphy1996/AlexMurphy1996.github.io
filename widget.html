@@ -40,9 +40,11 @@
 	
 	<script>
 		var SDK = lpTag.agentSDK;
-		
+		SDK.init();
+				
 		function onClick1() {
-			var data = {text: "La lala lalalalalaaa"}
+			var data = {text: "La lala lalalalalaaa"};
+			SDK.command('Write Chat Line', data);
 		}
 	</script>
 	
