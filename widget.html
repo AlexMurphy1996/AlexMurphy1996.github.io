@@ -43,19 +43,23 @@
 		SDK.init();
 				
 		function onClick1() {
-			var data = {text: "To verify your account, we need to confirm your age and address. To do this, you need to send us a a copy of two documents – \n • Verify your age: Passport (both pages) or driver licence that's in date \n • Verify your address: Utility Bill (electricity, gas, phone bill), Tax Bill or Bank Statement.\n Make sure that the uploaded copy is less than 6 months old and shows your name, your address and the Logo of the 3rd party company."};
+			var data = {
+				text: "It appears your account has not yet been fully verified. \nTo verify your account, we need to confirm your age and address. To do this, you need to send us a copy of two documents – \n • Verify your age: Passport (both pages) or driver license that's in date \n • Verify your address: Utility Bill (electricity, gas, phone bill), Tax Bill or Bank Statement.\n Make sure that the uploaded copy is less than 6 months old and shows your name, your address and the Logo of the 3rd party company."
+			};
 			SDK.command('Write ChatLine', data);
 		}
 		
 		function onClick2() {
 			var data = {
-				text: "La lala lalalalalaaa"
+				text: "I can offer you free spins worth €5 on your account 😊"
 			};
 			SDK.command('Write ChatLine', data);
 		}
 		
 		function onClick3() {
-			var data = {text: "La lala lalalalalaaa"};
+			var data = {
+				text: "I apologise for any inconvenience that may have been caused. I would like to offer you €40 in free bets as a good will gesture in the hope that this will not hurt our relationship going forward."
+			};
 			SDK.command('Write ChatLine', data);
 		}
 	</script>
@@ -93,7 +97,7 @@
 					<p align="middle"><b>Account Status:</b></p><br />
 					<p align="middle">Verification Needed.</p><br />
 					<p align="center"><img src="./verification.png" height="60" width="60" align="middle"></p>
-					<div class="wrapper"><button align="center">Send Reminder</button></div>
+					<div class="wrapper"><button onclick="onClick1()" align="center">Send Reminder</button></div>
 				</div>
 				
 			</div>
@@ -102,7 +106,7 @@
 					<p align="middle"><b>Upsell:</b></p><br />
 					<p align="middle">Games €5 free spins</p><br />
 					<p align="center"><img src="./upsell.jpg" height="60" width="80" align="middle"></p>
-					<div class="wrapper"><button onclick="onClick1()" align="center">Send upsell</button></div>
+					<div class="wrapper"><button onclick="onClick2()" align="center">Send upsell</button></div>
 				</div>
 			</div>
 			<div class="column">
@@ -110,7 +114,7 @@
 					<p align="middle"><b>Surprise/Apologise:</b></p><br />
 					<p align="middle">€40 Goodwill Gesture</p><br />
 					<p align="center"><img src="./apologise.png" height="60" width="60" align="middle"></p>
-					<div class="wrapper"><button align="center">Send GWG</button></div>
+					<div class="wrapper"><button onclick="onClick3()" align="center">Send GWG</button></div>
 				</div>
 			</div>
 		</div>
