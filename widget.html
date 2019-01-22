@@ -1,13 +1,129 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html lang="en" style="background-color: #f1f1f1">
+	<head>
+		<script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript" src="https://alexmurphy1996.github.io/Speedometer.js"></script>
 
-<?php
-echo "<h2>PHP is Fun!</h2>";
-echo "Hello world!<br>";
-echo "I'm about to learn PHP!<br>";
-echo "This ", "string ", "was ", "made ", "with multiple parameters.";
-?> 
+		<title>Proactive Contact Widget</title>
+		<style>
+			* {
+				box-sizing: border-box;
+				
+			}
 
-</body>
-</html>
+			/* Create three equal columns that floats next to each other */
+			.column {
+				float: left;
+				padding: 10px;
+				height:300px;
+				width:30%;
+				border-radius: 20px;
+				background-color:white;
+				border-color: #f1f1f1;
+				box-shadow: 0 0 5px 2px rgba(0,0,0,.35);
+				margin: 1%;
+			}
+
+			/* Clear floats after the columns */
+			.row:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+			
+			.wrapper {
+				text-align: center;
+			}
+			
+			p {
+				font-size: 15px
+			}
+		</style>
+	</head>
+	
+	<script>
+		var SDK = lpTag.agentSDK;
+		SDK.init();
+				
+		function onClick1() {
+			var data = {
+				text: "It appears your account has not yet been fully verified. To fully verify your account we need a proof of address. Preferably one of the following:\n • Utility Bill (electricity, gas, phone bill)\n• Tax Bill \n•Bank Statement.\n☝️ Please make sure that the uploaded copy is less than 6 months old and shows your name, your address and the Logo of the 3rd party company."
+			};
+			SDK.command('Write ChatLine', data);
+		}
+		
+		function onClick2() {
+			var data = {
+				text: "I can offer you free spins worth €5 on your account 😊"
+			};
+			SDK.command('Write ChatLine', data);
+		}
+		
+		function onClick3() {
+			var data = {
+				text: "I apologise for any inconvenience that may have been caused. I would like to offer you €10 in free bets as a good will gesture in the hope that this will not hurt our relationship going forward."
+			};
+			SDK.command('Write ChatLine', data);
+		}	
+	</script>
+	
+	<header style="background-color:#f1f1f1;">
+		<div class="row">
+			<div class="column">
+				<h3 style="text-align:center">Sentiment</h3>
+				<div id="chart_div" align="center"></div>
+				<div>
+					<p align="center">😒</p>
+				</div>
+				<div>
+					<p align="center"><b>Value Tier</b> = 3</p>
+				</div>
+			</div>
+			<div class="column">
+				<h3 style="text-align:center">Betting</h3>
+				<p align="center"><b>Sports: </b>95%</p>
+				<p align="center"><b>Gaming: </b>5% (Casino)</p>
+				<p align="center"><b>Exchange: </b>0%</p><br /><br />
+			</div>
+			<div class="column">
+				<h3 style="text-align:center">Bets & Contacts</h3>
+				<p><b>Main Bets:</b></p>
+				<p>• Football, Liverpool</p>
+				<p>• Multiples</p>
+				
+				<p><b>Contacts in last month:</b></p>
+				<p>• 1</p>
+				<p><b>Account Opened:</b></p>
+				<p>• July 2018 </p>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="column" style="background-color:#99ff99">
+				<div>
+					<h3 style="text-align:center">Account</h3><br />
+					<p align="center"><b>Action: </b>Verification Needed.</p><br />
+					<p align="center"><img src="./verification.png" height="60" width="60" align="middle"></p>
+					<div class="wrapper"><button onclick="onClick1()">Send Reminder</button></div>
+				</div>
+				
+			</div>
+			<div class="column">
+				<div>
+					<h3 style="text-align:center">Upsell</h3><br />
+					<p align="center"><b>Action: </b>Casino 30 free spins</p><br />
+					<p align="center"><img src="./upsell.jpg" height="60" width="80" align="middle"></p>
+					<div class="wrapper"><button type="button" disabled>Send upsell</button></div>
+				</div>
+			</div>
+			<div class="column">
+				<div>
+					<h3 style="text-align:center">Surprise/Apologise</h3><br />
+					<p align="center"><b>Action: </b>NA</p><br /><br />
+					<p align="center"><img src="./apologise.png" height="60" width="60" align="middle"></p>
+					<div class="wrapper"><button onclick="onClick3()">Send GWG</button></div>
+				</div>
+			</div>
+		</div>
+	</header>	
