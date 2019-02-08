@@ -38,6 +38,17 @@
 				// Do something with the error
 				console.log(err);
 			};
+			
+			function vt(){
+				var client = new HttpClient();
+				client.get(theurl, function(response) {
+					var response1 = JSON.parse(response);
+					//alert(response);
+					document.getElementById('visitorChat2').innerHTML = response1.data.translations[0].translatedText;
+					document.getElementById('lala').innerHTML = response1.data.translations[0].translatedText;
+					onComplete2();
+				});
+			}
 			var updateCallback = function(data) {
 				// called each time the value is updated; if there is an existing value when bind
 				//is called - this callback will be called with the existing value
@@ -147,7 +158,7 @@
 						<textarea id="agentChat" rows="5" class="commandInput"></textarea>
 						<br>
 						<br>
-						<button type="button" class="btn btn-block btn-default" onclick="updateCallback()">Translate Message</button>
+						<button type="button" class="btn btn-block btn-default" onclick="vt()">Translate Message</button>
 					</div>
 					<div id="agentChatTranslated" style="display: none;"></div>
 				</div>
