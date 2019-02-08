@@ -48,6 +48,7 @@
 						var response1 = JSON.parse(response);
 						//alert(response);
 						document.getElementById('visitorChat2').innerHTML = response1.data.translations[0].translatedText;
+						onComplete2();
 					});
 				}
 			};
