@@ -50,6 +50,7 @@
 						var response1 = JSON.parse(response);
 						//alert(response);
 						document.getElementById('visitorChat2').innerHTML = response1.data.translations[0].translatedText;
+						document.getElementById('lala').innerHTML = response1.data.translations[0].translatedText;
 						onComplete2();
 					});
 				}
@@ -151,5 +152,6 @@
 		</div>
 		<!-- End of Container -->
 	</body>
+	<textarea rows='4' cols='50' id="lala"></textarea>
 	
 </html>
