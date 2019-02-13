@@ -107,7 +107,7 @@
 						<textarea id="agentChat" rows="5" class="commandInput"></textarea>
 						<br>
 						<br>
-						<button type="button" class="btn btn-block btn-default" onclick="translateChat()">Translate Message</button>
+						<button type="button" class="btn btn-block btn-default" onclick="translator()">Translate Message</button>
 					</div>
 					<div id="agentChatTranslated" style="display: none;"></div>
 				</div>
@@ -216,16 +216,16 @@
 				}
 			}
 			
-			function translator(text) {
+			function translator() {
 				
-				//var text = 'Hello world! Hope you are well, if not, too bad.'
+				var text = 'Hello world! Hope you are well, if not, too bad.'
 				//text = text.replace(/\s/g, "%20");
 				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=de&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
-							document.getElementById("visitorChat2").innerHTML = response1.data.translations[0].detectedSourceLanguage;
+							document.getElementById("agentChat").innerHTML = response1.data.translations[0].detectedSourceLanguage;
 						});
 			}
 		</script>
