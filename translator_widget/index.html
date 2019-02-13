@@ -132,6 +132,17 @@
 				console.log(err);
 			};
 			var updateCallback = function(data) {
+				var HttpClient = function() {
+					this.get = function(aUrl, aCallback) {
+						var anHttpRequest = new XMLHttpRequest();
+						anHttpRequest.onreadystatechange = function() {
+							if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+								aCallback(anHttpRequest.responseText);
+						}
+						anHttpRequest.open("GET", aUrl, true);
+						anHttpRequest.send( null );
+					}
+				}	
 				// called each time the value is updated; if there is an existing value when bind
 				//is called - this callback will be called with the existing value
 				//console.log(data.newValue);
@@ -141,11 +152,17 @@
 				//add new chat line to page if it is from the visitor
 				if (data.newValue.lines[0].source == 'visitor') {
 					//update the hidden div with the visitors chat line
-					
+					document.getElementById('visitorChat2').innerHTML = chatLine;
 					//translate the visitors chat line based on skill group
-					var translated = translator(chatLine);
-					document.getElementById('visitorChat2').innerHTML = translated;
-					onComplete2();
+					var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=de&q=' + text;
+					var client = new HttpClient();
+						client.get(theurl, function(response) {
+							var response1 = JSON.parse(response);
+							//alert(response);
+							document.getElementById("visitorChat2").innerHTML = response1.data.translations[0].detectedSourceLanguage;
+							onComplete2();
+						});
+					
 				}
 			};
 			var notifyWhenDone = function(err) {
@@ -219,14 +236,14 @@
 			
 			function translator(text) {
 				
-				var text = 'Hello world! Hope you are well, if not, too bad.'
+				//var text = 'Hello world! Hope you are well, if not, too bad.'
 				//text = text.replace(/\s/g, "%20");
 				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=de&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
-							return response1.data.translations[0].detectedSourceLanguage;
+							document.getElementById("visitorChat2").innerHTML = response1.data.translations[0].detectedSourceLanguage;
 						});
 			}
 		</script>
