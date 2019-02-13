@@ -113,7 +113,7 @@
 				</div>
 				<div class="col-md-4 col-centered"></div>
 			</div>
-			<!-- Start of Agent Chat Area -->
+			<!-- End of Agent Chat Area -->
 		</div>
 		<!-- End of Container -->
 		<script>
@@ -230,119 +230,5 @@
 			}
 		</script>
 
-
-
-		<title> </title>
-		<div id="WidgetFloaterPanels" translate="no" style="display: none;text-align: left;direction: ltr" class="LTRStyle"> 
-			<div id="WidgetFloater" style="display: none" onmouseover="Microsoft.Translator.OnMouseOverFloater()" onmouseout="Microsoft.Translator.OnMouseOutFloater()"> 
-				<div id="WidgetLogoPanel"> 
-					<span id="WidgetTranslateWithSpan" style="text-align:left;">Bing Translator</span> 
-					<span id="WidgetCloseButton" title="Exit Translation" onclick="Microsoft.Translator.FloaterOnClose()">
-						<img src="https://ssl.microsofttranslator.com/static/25481438/img/close_x.png" id="WidgetCloseImage" class="WidgetCloseImage">
-					</span>
-				</div> 
-				<div id="LanguageMenuPanel"> 
-					<div class="DDStyle_outer">
-						<input name="LanguageMenu_svid" type="text" id="LanguageMenu_svid" style="display:none;" autocomplete="on" value="af" onclick="this.select()"> 
-						<input name="LanguageMenu_textid" type="text" id="LanguageMenu_textid" style="display:none;" autocomplete="on" onclick="this.select()"> 
-						<span onselectstart="return false" tabindex="0" class="DDStyle" id="__LanguageMenu_header" onclick="return LanguageMenu &amp;&amp; !LanguageMenu.Show('__LanguageMenu_popup', event);" onkeydown="return LanguageMenu &amp;&amp; !LanguageMenu.Show('__LanguageMenu_popup', event);" title="Afrikaans" style="overflow: visible;">Afrikaans</span> 
-						<div style="position:relative;text-align:left;left:0;">
-							<div style="position:absolute;width:;left:0px;">
-								<div class="DDStyle" style="display:none;" id="__LanguageMenu_popup"> 
-									
-									<img alt="" src="https://ssl.microsofttranslator.com/static/25481438/img/niche.gif" style="height:7px;width:17px;border-width:0px;left:20px;"> 
-									<div id="OriginalLanguageDiv">
-										<span id="OriginalTextSpan">ORIGINAL: </span>
-										<span id="OriginalLanguageSpan"></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div> 
-					<script type="text/javascript"> 
-						var LanguageMenu; 
-						var LanguageMenu_keys=["af","ar","bn","bs-Latn","bg","yue","ca","zh-CHS","zh-CHT","hr","cs","da","nl","en","et","fj","fil","fi","fr","de","el","ht","he","hi","mww","hu","is","id","it","ja","sw","tlh","ko","lv","lt","mg","ms","mt","no","fa","pl","pt","otq","ro","ru","sm","sr-Cyrl","sr-Latn","sk","sl","es","sv","ty","ta","th","to","tr","uk","ur","vi","cy","yua"]; 
-						var LanguageMenu_values=["Afrikaans","Arabic","Bangla","Bosnian (Latin)","Bulgarian","Cantonese (Traditional)","Catalan","Chinese Simplified","Chinese Traditional","Croatian","Czech","Danish","Dutch","English","Estonian","Fijian","Filipino","Finnish","French","German","Greek","Haitian Creole","Hebrew","Hindi","Hmong Daw","Hungarian","Icelandic","Indonesian","Italian","Japanese","Kiswahili","Klingon","Korean","Latvian","Lithuanian","Malagasy","Malay","Maltese","Norwegian Bokmål","Persian","Polish","Portuguese","Querétaro Otomi","Romanian","Russian","Samoan","Serbian (Cyrillic)","Serbian (Latin)","Slovak","Slovenian","Spanish","Swedish","Tahitian","Tamil","Thai","Tongan","Turkish","Ukrainian","Urdu","Vietnamese","Welsh","Yucatec Maya"]; 
-						var LanguageMenu_callback=function(){ }; 
-						var LanguageMenu_popupid='__LanguageMenu_popup'; 
-					</script> 
-				</div> 
-				<div id="CTFLinksPanel"> 
-					<span id="ExternalLinksPanel">
-						<a id="BingTranslatorLink" title="bing.com/translator" href="http://www.bing.com/translator" target="_blank"> 
-							<img id="BingTranslatorLinkImg" src="https://ssl.microsofttranslator.com/static/25481438/img/bingmark.png">
-						</a> 
-						<a id="FacebookLink" href="https://www.facebook.com/microsofttranslator" title="Bing Translator on Facebook" target="_blank"> 
-							<img id="FacebookImg" src="https://ssl.microsofttranslator.com/static/25481438/img/fbookmark.png">
-						</a> 
-						<a id="ShareLink" title="Share" href="javascript:Microsoft.Translator.FloaterShowSharePanel()"> 
-							<img id="ShareImg" src="https://ssl.microsofttranslator.com/static/25481438/img/sharemark.png">
-						</a> 
-					</span> 
-				</div> 
-				<div id="FloaterProgressBar"> 
-					<div id="ProgressFill"> Translating... </div> 
-				</div> 
-			</div> 
-			<div id="WidgetFloaterCollapsed" style="display: none" onmouseover="Microsoft.Translator.OnMouseOverFloater()"> 
-					<span id="WidgetFloaterCollapsedSpan">Bing Translator</span> 
-					<span id="WidgetCloseButtonCollapsed" title="Exit Translation" onclick="Microsoft.Translator.FloaterOnClose()">
-						<img src="https://ssl.microsofttranslator.com/static/25481438/img/close_x.png" id="WidgetCloseImageCollapsed" class="WidgetCloseImage">
-					</span>
-				</div> 
-			<div id="FloaterSharePanel" style="display: none"> 
-					<div id="ShareTextDiv"> 
-						<span id="ShareTextSpan"> COPY THE URL BELOW </span> 
-					</div> 
-					<div id="ShareTextboxDiv"> 
-						<input name="ShareTextbox" type="text" id="ShareTextbox" readonly="readonly" onclick="this.select()"> 
-						<!--a id="TwitterLink" title="Share on Twitter"> <img id="TwitterImg" src="https://ssl.microsofttranslator.com/static/25481438/img/twitter_icon.png" /></a> 
-						<a-- id="FacebookLink" title="Share on Facebook"> <img id="FacebookImg" src="https://ssl.microsofttranslator.com/static/25481438/img/facebook_icon.png" /></a--> 
-						<a id="EmailLink" title="Email this translation"> 
-							<img id="EmailImg" src="https://ssl.microsofttranslator.com/static/25481438/img/email_icon.png">
-						</a> 
-					</div> 
-					<div id="ShareFooter"> 
-						<span id="ShareHelpSpan">
-							<a id="ShareHelpLink"> 
-								<img id="ShareHelpImg" src="https://ssl.microsofttranslator.com/static/25481438/img/embed_question.png">
-							</a>
-						</span> 
-						<span id="ShareBackSpan">
-							<a id="ShareBack" href="javascript:Microsoft.Translator.FloaterOnShareBackClick()" title="Back To Translation"> Back</a>
-						</span> 
-					</div> 
-					<input name="EmailSubject" type="hidden" id="EmailSubject" value="Check out this page in {0} translated from {1}"> 
-					<input name="EmailBody" type="hidden" id="EmailBody" value="Translated: {0}%0d%0aOriginal: {1}%0d%0a%0d%0aAutomatic translation powered by Microsoft® Translator%0d%0ahttp://www.bing.com/translator?ref=MSTWidget"> 
-					<input type="hidden" id="ShareHelpText" value="This link allows visitors to launch this page and automatically translate it to {0}."> 
-				</div> 
-			<div id="FloaterEmbed" style="display: none"> 
-				<div id="EmbedTextDiv"> 
-					<span id="EmbedTextSpan">EMBED THE SNIPPET BELOW IN YOUR SITE</span> 
-					<a id="EmbedHelpLink" title="Copy this code and place it into your HTML."> 
-						<img id="EmbedHelpImg" src="https://ssl.microsofttranslator.com/static/25481438/img/embed_question.png">
-					</a> 
-				</div> 
-				<div id="EmbedTextboxDiv"> 
-					<input name="EmbedSnippetTextBox" type="text" id="EmbedSnippetTextBox" readonly="readonly" value="<div id='MicrosoftTranslatorWidget' class='Dark' style='color:white;background-color:#555555'></div><script type='text/javascript'>setTimeout(function(){var s=document.createElement('script');s.type='text/javascript';s.charset='UTF-8';s.src=((location &amp;&amp; location.href &amp;&amp; location.href.indexOf('https') == 0)?'https://ssl.microsofttranslator.com':'http://www.microsofttranslator.com')+'/ajax/v3/WidgetV3.ashx?siteData=ueOIGRSKkd965FeEGM5JtQ**&amp;ctf=true&amp;ui=true&amp;settings=manual&amp;from=en';var p=document.getElementsByTagName('head')[0]||document.documentElement;p.insertBefore(s,p.firstChild); },0);</script>" onclick="this.select()"> 
-				</div> 
-				<div id="EmbedNoticeDiv">
-					<span id="EmbedNoticeSpan">Enable collaborative features and customize widget: <a href="http://www.bing.com/widget/translator" target="_blank">Bing Webmaster Portal</a></span>
-				</div> 
-				<div id="EmbedFooterDiv">
-					<span id="EmbedBackSpan"><a href="javascript:Microsoft.Translator.FloaterOnEmbedBackClick()" title="Back To Translation">Back</a></span>
-				</div> 
-			</div> 
-			<script type="text/javascript"> 
-				var intervalId = setInterval(function () { if (MtPopUpList) { LanguageMenu = new MtPopUpList(); 
-				var langMenu = document.getElementById(LanguageMenu_popupid); 
-				var origLangDiv = document.createElement("div"); 
-				origLangDiv.id = "OriginalLanguageDiv"; 
-				origLangDiv.innerHTML = "<span id='OriginalTextSpan'>ORIGINAL: </span><span id='OriginalLanguageSpan'></span>"; 
-				langMenu.appendChild(origLangDiv); 
-				LanguageMenu.Init('LanguageMenu', LanguageMenu_keys, LanguageMenu_values, LanguageMenu_callback, LanguageMenu_popupid); 
-				window["LanguageMenu"] = LanguageMenu; clearInterval(intervalId); } }, 1); 
-			</script> 
-		</div>
 	</body>
 </html>
