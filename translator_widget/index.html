@@ -1,14 +1,13 @@
 <html>
 	<head>
-		<link href="https://ssl.microsofttranslator.com/static/25481438/css/WidgetV3.css?v=25481438" rel="stylesheet">
 		<title>Translate Widget Example</title>
 		<script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 		<link rel="stylesheet" href="css/bootstrap-slate.min.css">
 		<link rel="stylesheet" href="css/example2.css">
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
-		<script src="https://www.microsoftTranslator.com/ajax/v3/WidgetV3.ashx?siteData=ueOIGRSKkd965FeEGM5JtQ**&amp;widget=none" type="text/javascript"></script>
 		<style>
+		
 			/* centered columns styles */
 
 			.row-centered {
@@ -26,7 +25,9 @@
 				display: none !important;
 			}
 			
-			body {background-color: #F0F0F0;}
+			body {
+				background-color: #F0F0F0;
+			}
 
 		</style>
 		<script type="text/javascript" charset="utf-8" src="https://ssl.bing.com/widget/metrics.js"></script><script type="text/javascript" charset="utf-8" src="https://www.microsofttranslator.com/ajax/v3/community.aspx?fmt=js&amp;loc=en&amp;siteData=ueOIGRSKkd965FeEGM5JtQ**"></script>
@@ -34,51 +35,6 @@
 	</head>
 
 	<body style="">
-		<div id="MicrosoftTranslatorCommunity" style="display: none;" class="MSTCltr">
-			<div id="MSTCContent" translate="no">
-				<a id="MSTCExpandLink" href="javascript:void(0)">
-					<span id="MSTCImprove">Show all community translations</span>
-				</a>
-				<div id="MSTCRootPanel">
-					<span id="MSTCLoading">Loading...</span>
-					<div id="MSTCTransPanelError" style="display: none;">
-						<div class="MSTCTableRow">
-							<div class="MSTCTransPanelExc MSTCTableCell">
-								<img id="ExclamationImage" src="https://ssl.microsofttranslator.com/static/25481438/img/error_exclamation.gif" style="border-width:0px;">
-							</div>
-							<div class="MSTCTableCell">
-								<span id="MSTCTransPanelErrorMsg"></span>
-							</div>
-						</div>
-						<div class="MSTCTableRow">
-							<div class="MSTCTableCell"></div>
-							<div class="MSTCTableCell MSTCFlipHoriz">
-								<a href="http://go.microsoft.com/?linkid=9713560" target="_blank">
-									<img id="MSTCHelpImgBtn" class="MSTCErrorButtons" src="https://ssl.microsofttranslator.com/static/25481438/img/error_help.gif" style="border-width:0px;">
-								</a>
-								<input type="image" name="MSTCOKImgBtn" id="MSTCOKImgBtn" class="MSTCErrorButtons" src="https://ssl.microsofttranslator.com/static/25481438/img/error_OK.gif" style="border-width:0px;">
-							</div>
-						</div>
-					</div>
-					<div id="MSTCTransPanel"></div>
-					<div id="MSTCPrevNextPanel" style="display: none;">
-						<a id="MSTCPrevLink" href="javascript:void(0)">
-							<span>Previous</span>
-							<span id="MSTCPrevCount">(0)</span>
-						</a>
-						<a id="MSTCNextLink" href="javascript:void(0)">
-							<span>Next</span>
-							<span id="MSTCNextCount">(0)</span>
-						</a>
-					</div>
-					<div id="MSTCFooterPanel">
-						<span id="MSTCLegalHelpBox">
-							<a id="MSTCLegalLink" href="https://www.microsoft.com/servicesagreement/" target="_blank">Legal</a>
-						</span>
-					</div>
-				</div>
-			</div>
-		</div>
 		<!-- Start of Container -->
 		<div class="container">
 			<!-- Visitor Chat Area -->
@@ -90,7 +46,10 @@
 						<h2>Visitor Message</h2>
 					</div>
 					<div>
-						<textarea id="visitorChat" rows="5" class="commandInput" disabled=""></textarea>
+						<textarea id="visitorChat" rows="5" class="commandInput"></textarea>
+						<br>
+						<br>
+						<button type="button" class="btn btn-block btn-default" onclick="translate_to_english()">Translate Message</button>
 					</div>
 					<div id="visitorChat2" style="display: none;"></div>
 				</div>
@@ -216,16 +175,29 @@
 				}
 			}
 			
-			function translator() {
+			function translate_to_english() {
 				
 				var text = document.getElementById("visitorChat").innerHTML
 				//text = text.replace(/\s/g, "%20");
-				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=de&q=' + text;
+				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=en&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
 							document.getElementById("agentChat").innerHTML = response1.data.translations[0].translatedText;
+						});
+			}
+			
+			function translate_from_english() {
+				
+				var text = document.getElementById("agentChat").innerHTML
+				//text = text.replace(/\s/g, "%20");
+				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=it&q=' + text;
+				var client = new HttpClient();
+						client.get(theurl, function(response) {
+							var response1 = JSON.parse(response);
+							//alert(response);
+							document.getElementById("visitorChat").innerHTML = response1.data.translations[0].translatedText;
 						});
 			}
 		</script>
