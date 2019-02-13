@@ -129,10 +129,10 @@
 				onComplete();
 			}
 			//called when the translation is complete
-			function onComplete() {
+			function onComplete(translation) {
 				//alert("Done");
 				//get the translated text
-				var translation = document.getElementById('agentChatTranslated').innerHTML;
+				//var translation = document.getElementById('agentChatTranslated').innerHTML;
 				var data = {
 					text: translation
 				};
@@ -197,6 +197,7 @@
 							var response1 = JSON.parse(response);
 							alert(response1.data.translations[0].translatedText);
 							document.getElementById("visitorChat").innerHTML = response1.data.translations[0].translatedText;
+							onComplete(response1.data.translations[0].translatedText);
 						});
 			}
 		</script>
