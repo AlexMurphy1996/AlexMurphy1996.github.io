@@ -214,6 +214,30 @@
 				//alert("The page was reverted to the original language. This message is not part of the widget.");
 			}
 
+			var HttpClient = function() {
+				this.get = function(aUrl, aCallback) {
+					var anHttpRequest = new XMLHttpRequest();
+					anHttpRequest.onreadystatechange = function() {
+						if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+							aCallback(anHttpRequest.responseText);
+					}
+					anHttpRequest.open("GET", aUrl, true);
+					anHttpRequest.send( null );
+				}
+			}
+			
+			function translator(text) {
+				
+				//var text = 'Hello world! Hope you are well, if not, too bad.'
+				//text = text.replace(/\s/g, "%20");
+				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=de&q=' + text;
+				var client = new HttpClient();
+						client.get(theurl, function(response) {
+							var response1 = JSON.parse(response);
+							//alert(response);
+							document.getElementById("visitorChat2").innerHTML = response1.data.translations[0].detectedSourceLanguage;
+						});
+			}
 		</script>
 
 
