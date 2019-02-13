@@ -141,9 +141,10 @@
 				//add new chat line to page if it is from the visitor
 				if (data.newValue.lines[0].source == 'visitor') {
 					//update the hidden div with the visitors chat line
-					document.getElementById('visitorChat2').innerHTML = 'lalalala';
+					
 					//translate the visitors chat line based on skill group
-					translator(chatLine);
+					var translated = translator(chatLine);
+					document.getElementById('visitorChat2').innerHTML = translated;
 					onComplete2();
 				}
 			};
@@ -225,7 +226,7 @@
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
-							document.getElementById("visitorChat2").innerHTML = response1.data.translations[0].detectedSourceLanguage;
+							return response1.data.translations[0].detectedSourceLanguage;
 						});
 			}
 		</script>
