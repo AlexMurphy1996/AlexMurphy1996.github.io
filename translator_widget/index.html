@@ -144,7 +144,7 @@
 			//called when the translation is complete
 			function onComplete2() {
 				//alert("Done");
-				var text = document.getElementById("visitorChat2").value;
+				var text = document.getElementById("visitorChat2").innerHTML;
 				//text = text.replace(/\s/g, "%20");
 				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=en&q=' + text;
 				var client = new HttpClient();
