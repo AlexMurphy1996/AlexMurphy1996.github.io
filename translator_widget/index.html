@@ -176,27 +176,27 @@
 			
 			function translate_to_english() {
 				
-				var text = document.getElementById("visitorChat").innerHTML
+				var text = document.getElementById("visitorChat").value;
 				//text = text.replace(/\s/g, "%20");
 				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=en&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
-							document.getElementById("agentChat").value = response1.data.translations[0].translatedText;
+							document.getElementById("agentChat").innerHTML = response1.data.translations[0].translatedText;
 						});
 			}
 			
 			function translate_from_english() {
 				
-				var text = document.getElementById("agentChat").innerHTML
+				var text = document.getElementById("agentChat").value;
 				//text = text.replace(/\s/g, "%20");
 				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=it&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
 							//alert(response);
-							document.getElementById("visitorChat").value = response1.data.translations[0].translatedText;
+							document.getElementById("visitorChat").innerHTML = response1.data.translations[0].translatedText;
 						});
 			}
 		</script>
