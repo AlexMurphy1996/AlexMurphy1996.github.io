@@ -182,7 +182,7 @@
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
-							//alert(response);
+							alert(response1.data.translations[0].translatedText);
 							document.getElementById("agentChat").innerHTML = response1.data.translations[0].translatedText;
 						});
 			}
