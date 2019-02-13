@@ -144,8 +144,17 @@
 			//called when the translation is complete
 			function onComplete2() {
 				//alert("Done");
+				var text = document.getElementById("visitorChat2").value;
+				//text = text.replace(/\s/g, "%20");
+				var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=en&q=' + text;
+				var client = new HttpClient();
+						client.get(theurl, function(response) {
+							var response1 = JSON.parse(response);
+							//alert(response1.data.translations[0].translatedText);
+							document.getElementById("visitorChat").value = response1.data.translations[0].translatedText;
+						});
 				//update the text area with the translation
-				document.getElementById('visitorChat').value = document.getElementById('visitorChat2').innerHTML;
+				//document.getElementById('visitorChat').value = document.getElementById('visitorChat2').innerHTML;
 				//close the translation widget
 				$('#WidgetCloseImage').trigger("click");
 			}
