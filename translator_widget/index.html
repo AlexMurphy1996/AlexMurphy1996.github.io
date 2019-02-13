@@ -132,7 +132,7 @@
 			function onComplete() {
 				//alert("Done");
 				//get the translated text
-				var translation = document.getElementById('visitorChat').innerHTML;
+				var translation = document.getElementById('agentChatTranslated').innerHTML;
 				var data = {
 					text: translation
 				};
@@ -197,7 +197,6 @@
 							var response1 = JSON.parse(response);
 							//alert(response);
 							document.getElementById("visitorChat").innerHTML = response1.data.translations[0].translatedText;
-							//onComplete();
 						});
 			}
 		</script>
