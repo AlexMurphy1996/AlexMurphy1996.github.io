@@ -196,10 +196,10 @@
 				var text = document.getElementById("agentChat").value;
 				//text = text.replace(/\s/g, "%20");
 				var source = document.getElementById("sources").innerHTML;
-				if source != 'en':
-					var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=' + source + '&q=' + text;
-				else:
+				if source == 'en':
 					var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=it&q=' + text;
+				else:
+					var theurl = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyAYKCnktSo4KKnIU5CPEy5iGbkcPBHt_kI&target=' + source + '&q=' + text;
 				var client = new HttpClient();
 						client.get(theurl, function(response) {
 							var response1 = JSON.parse(response);
