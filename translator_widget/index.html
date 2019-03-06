@@ -40,8 +40,7 @@
 					<!-- <img src="https://sportsarbitrage.com.au/wp-content/uploads/2017/07/Betfair-saa.jpg" alt="Betfair Banner" style="width:200px" > -->
 					<div translate="no">
 						<h2>Visitor Message</h2>
-						<span>Customer Source Language:</span>
-						<p id="sources"></p>
+						<span>Customer Source Language:</span><span id="sources"></span>
 					</div>
 					<div>
 						<textarea id="visitorChat" rows="5" class="commandInput" disabled=""></textarea>
@@ -149,7 +148,7 @@
 							var response1 = JSON.parse(response);
 							//alert(response1.data.translations[0].translatedText);
 							document.getElementById("visitorChat").value = response1.data.translations[0].translatedText;
-							document.getElementById("sources").value = response1.data.translations[0].detectedSourceLanguage;
+							document.getElementById("sources").innerHTML = response1.data.translations[0].detectedSourceLanguage;
 						});
 				//update the text area with the translation
 				//document.getElementById('visitorChat').value = document.getElementById('visitorChat2').innerHTML;
