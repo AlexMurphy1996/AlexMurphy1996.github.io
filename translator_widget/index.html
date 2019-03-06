@@ -1,3 +1,4 @@
+  
 <html>
 	<head>
 		<title>Translate Widget Example</title>
@@ -9,18 +10,15 @@
 		<style>
 		
 			/* centered columns styles */
-
 			.row-centered {
 				text-align: center;
 			}
-
 			.col-centered {
 				display: block;
 				margin-left: auto;
 				margin-right: auto;
 				text-align: center;
 			}
-
 			.LTRStyle {
 				display: none !important;
 			}
@@ -28,7 +26,6 @@
 			body {
 				background-color: #F0F0F0;
 			}
-
 		</style>
 		<style type="text/css"></style>
 	</head>
@@ -43,6 +40,7 @@
 					<!-- <img src="https://sportsarbitrage.com.au/wp-content/uploads/2017/07/Betfair-saa.jpg" alt="Betfair Banner" style="width:200px" > -->
 					<div translate="no">
 						<h2>Visitor Message</h2>
+						<span>Customer Source Language:</span><span id="sources"></span>
 					</div>
 					<div>
 						<textarea id="visitorChat" rows="5" class="commandInput" disabled=""></textarea>
@@ -112,11 +110,9 @@
 				// called when the bind is completed successfully,
 				// or when the action terminated with an error
 			};
-
 			//path to the engagementInfo from the sdk
 			var pathToEngagementInfo = "engagementInfo";
 			SDK.get(pathToEngagementInfo, onSuccess, onError);
-
 			//path to the chat transcript from the sdk
 			var pathToData = "chatTranscript";
 			//bin the chat transcript so it will listen for new chatlines
@@ -152,6 +148,7 @@
 							var response1 = JSON.parse(response);
 							//alert(response1.data.translations[0].translatedText);
 							document.getElementById("visitorChat").value = response1.data.translations[0].translatedText;
+							document.getElementById("sources").value = response1.data.translations[0].detectedSourceLanguage;
 						});
 				//update the text area with the translation
 				//document.getElementById('visitorChat').value = document.getElementById('visitorChat2').innerHTML;
@@ -160,7 +157,6 @@
 			}
 			//called while the translation is in progress
 			function onProgress(value) {
-
 			}
 			//called if there is an error translating
 			function onError(error) {
@@ -170,7 +166,6 @@
 			function onRestoreOriginal() {
 				//alert("The page was reverted to the original language. This message is not part of the widget.");
 			}
-
 			var HttpClient = function() {
 				this.get = function(aUrl, aCallback) {
 					var anHttpRequest = new XMLHttpRequest();
