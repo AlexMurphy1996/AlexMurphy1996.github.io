@@ -5,7 +5,7 @@ function drawChart() {
 
     var data = google.visualization.arrayToDataTable([
 		['Label', 'Value'],
-        ['Sentiment', 4]
+        ['Sentiment', 1]
     ]);
 
     var options = {
