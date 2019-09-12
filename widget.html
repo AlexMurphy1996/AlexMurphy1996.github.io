@@ -55,14 +55,14 @@
 		
 		function onClick2() {
 			var data = {
-				text: "I can offer you free spins worth €5 on your account 😊"
+				text: "I've two premier league tickets for next month, if you're interested?"
 			};
 			SDK.command('Write ChatLine', data);
 		}
 		
 		function onClick3() {
 			var data = {
-				text: "I apologise for any inconvenience that may have been caused. I would like to offer you €10 in free bets as a good will gesture in the hope that this will not hurt our relationship going forward."
+				text: "I apologise for any inconvenience that may have been caused. I would like to offer you €100 in free bets as a good will gesture in the hope that this will not hurt our relationship going forward."
 			};
 			SDK.command('Write ChatLine', data);
 		}	
@@ -74,28 +74,33 @@
 				<h3 style="text-align:center">Sentiment</h3>
 				<div id="chart_div" align="center"></div>
 				<div>
-					<p align="center">😒</p>
+					<p align="center"><b>Sentiment: </b>😒</p>
 				</div>
 				<div>
 					<p align="center"><b>Value Tier</b> = 3</p>
 				</div>
+				<div>
+					<p align="center"><b>Reason to Churn: </b>Unlucky</p>
+				</div>
 			</div>
 			<div class="column">
-				<h3 style="text-align:center">Betting</h3>
-				<p align="center"><b>Sports: </b>95%</p>
-				<p align="center"><b>Gaming: </b>5% (Casino)</p>
-				<p align="center"><b>Exchange: </b>0%</p><br /><br />
+				<h3 style="text-align:center">Cohort</h3>
+				<p align="center"><b>Sports: </b>Main%</p>
+				<p align="center"><b>Gaming: </b>Never,</p>
+				<p align="center"><b>Exchange: </b>Never</p>
+				<p align="center"><font color="red">CHURN PROBABILITY: 70%</font></p>
+				<br />
 			</div>
 			<div class="column">
 				<h3 style="text-align:center">Bets & Contacts</h3>
 				<p><b>Main Bets:</b></p>
 				<p>• Football, Liverpool</p>
-				<p>• Multiples</p>
+				<p>• Racing</p>
 				
-				<p><b>Contacts in last month:</b></p>
-				<p>• 1</p>
 				<p><b>Account Opened:</b></p>
-				<p>• July 2018 </p>
+				<p>• April 2014 </p>
+				<p><b>Contacts in the last 4 weeks:</b></p>
+				<p>• 3</p>
 			</div>
 		</div>
 	
@@ -103,25 +108,25 @@
 			<div class="column" style="background-color:#99ff99">
 				<div>
 					<h3 style="text-align:center">Account</h3><br />
-					<p align="center"><b>Action: </b>Verification Needed.</p><br />
+					<p align="center"><b>Action: </b>NA</p><br />
 					<p align="center"><img src="./verification.png" height="60" width="60" align="middle"></p>
-					<div class="wrapper"><button onclick="onClick1()">Send Reminder</button></div>
+					<div class="wrapper"><button type="button" onclick="onClick1()" disabled>Send Reminder</button></div>
 				</div>
 				
 			</div>
 			<div class="column">
 				<div>
 					<h3 style="text-align:center">Upsell</h3><br />
-					<p align="center"><b>Action: </b>Casino 30 free spins</p>
+					<p align="center"><b>Action: </b>2 Premier League Tickets</p>
 					<p align="center"><img src="./l_vs_n.PNG" height="100" width="160" align="middle"></p>
-					<div class="wrapper"><button type="button" disabled>Send upsell</button></div>
+					<div class="wrapper"><button type="button">Send upsell</button></div>
 				</div>
 			</div>
 			<div class="column">
 				<div>
-					<h3 style="text-align:center">Surprise/Apologise</h3><br />
-					<p align="center"><b>Action: </b>NA</p><br /><br />
-					<p align="center"><img src="./apologise.png" height="60" width="60" align="middle"></p>
+					<h3 style="text-align:center">Personalised Offer</h3><br />
+					<p align="center"><b>Action: </b>100 Free Bet</p><br />
+					<p align="center"><img src="./cash.png" height="60" width="60" align="middle"></p>
 					<div class="wrapper"><button onclick="onClick3()">Send GWG</button></div>
 				</div>
 			</div>
