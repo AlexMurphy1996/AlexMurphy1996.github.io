@@ -54,6 +54,8 @@
 		}
 		
 		function onClick2() {
+			var cmdName = lpTag.agentSDK.cmdNames.writeSC; // = "Write StructuredContent"
+			
 			var data = {json: {
 					  "type": "vertical",
 					  "elements": [
@@ -64,7 +66,7 @@
 					    }
 					  ]
 					}};
-			SDK.command('WriteSC', data);
+			SDK.command(cmdName, data);
 		}
 		
 		function onClick3() {
