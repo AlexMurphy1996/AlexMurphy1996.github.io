@@ -55,8 +55,15 @@
 		
 		function onClick2() {
 			var data = {
-				text: "I've two premier league tickets for next month, if you're interested?"
-			};
+  "type": "vertical",
+  "elements": [
+    {
+      "url": "https://cache.promotions.betfair.com/media/english_uk/images/help_learning/FiTh.png",
+      "type": "image",
+      "tooltip": "image tooltip"
+    }
+  ]
+};
 			SDK.command('Write ChatLine', data);
 		}
 		
