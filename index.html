@@ -1,148 +1,187 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGI (IA) Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #003900; /* Paddy Power green background */
+        }
+        form {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #003900; /* Paddy Power green */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #003900; /* Paddy Power green */
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 5px;
+        }
+        .checkbox-group label {
+            margin-right: 20px;
+        }
+        button {
+            background-color: #003900; /* Paddy Power green */
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #026702; /* Slightly lighter green for hover */
+        }
+    </style>
+	<!-- BEGIN LivePerson Monitor. -->
+<script type="text/javascript">window.lpTag=window.lpTag||{},'undefined'==typeof window.lpTag._tagCount?(window.lpTag={wl:lpTag.wl||null,scp:lpTag.scp||null,site:'86380352'||'',section:lpTag.section||'',tagletSection:lpTag.tagletSection||null,autoStart:lpTag.autoStart!==!1,ovr:lpTag.ovr||{},_v:'1.10.0',_tagCount:1,protocol:'https:',events:{bind:function(t,e,i){lpTag.defer(function(){lpTag.events.bind(t,e,i)},0)},trigger:function(t,e,i){lpTag.defer(function(){lpTag.events.trigger(t,e,i)},1)}},defer:function(t,e){0===e?(this._defB=this._defB||[],this._defB.push(t)):1===e?(this._defT=this._defT||[],this._defT.push(t)):(this._defL=this._defL||[],this._defL.push(t))},load:function(t,e,i){var n=this;setTimeout(function(){n._load(t,e,i)},0)},_load:function(t,e,i){var n=t;t||(n=this.protocol+'//'+(this.ovr&&this.ovr.domain?this.ovr.domain:'lptag.liveperson.net')+'/tag/tag.js?site='+this.site);var o=document.createElement('script');o.setAttribute('charset',e?e:'UTF-8'),i&&o.setAttribute('id',i),o.setAttribute('src',n),document.getElementsByTagName('head').item(0).appendChild(o)},init:function(){this._timing=this._timing||{},this._timing.start=(new Date).getTime();var t=this;window.attachEvent?window.attachEvent('onload',function(){t._domReady('domReady')}):(window.addEventListener('DOMContentLoaded',function(){t._domReady('contReady')},!1),window.addEventListener('load',function(){t._domReady('domReady')},!1)),'undefined'===typeof window._lptStop&&this.load()},start:function(){this.autoStart=!0},_domReady:function(t){this.isDom||(this.isDom=!0,this.events.trigger('LPT','DOM_READY',{t:t})),this._timing[t]=(new Date).getTime()},vars:lpTag.vars||[],dbs:lpTag.dbs||[],ctn:lpTag.ctn||[],sdes:lpTag.sdes||[],hooks:lpTag.hooks||[],identities:lpTag.identities||[],ev:lpTag.ev||[]},lpTag.init()):window.lpTag._tagCount+=1;</script>
+<!-- END LivePerson Monitor. -->
+</head>
+<body>
 
-    <html>
-		<head>
+    <form id="sgiForm">
+        <h1>SGI (IA) Form</h1>
+        <div class="form-group">
+            <label for="chat-id">Chat ID</label>
+            <input type="text" id="chat-id" name="chat-id">
+        </div>
+        <div class="form-group">
+            <label for="ndl">NDL - £</label>
+            <input type="number" id="ndl" name="ndl">
+        </div>
+        <div class="form-group">
+            <label for="salary">Salary - £</label>
+            <input type="number" id="salary" name="salary">
+        </div>
+        <div class="form-group">
+            <label for="security">Security</label>
+            <input type="text" id="security" name="security">
+        </div>
+        <div class="form-group">
+            <label for="activity">Activity</label>
+            <input type="text" id="activity" name="activity">
+        </div>
+        <div class="form-group">
+            <label for="col">& Col</label>
+            <input type="text" id="col" name="col">
+        </div>
+        <div class="form-group">
+            <label for="control-impact">Control and Impact</label>
+            <input type="text" id="control-impact" name="control-impact">
+        </div>
+        <div class="form-group">
+            <label for="time-on-site">Time on Site</label>
+            <input type="text" id="time-on-site" name="time-on-site">
+        </div>
+        <div class="form-group">
+            <label for="finances">Finances (D&L)</label>
+            <input type="text" id="finances" name="finances">
+        </div>
+        <div class="form-group">
+            <label for="failed-deposits">Failed Deposits</label>
+            <input type="text" id="failed-deposits" name="failed-deposits">
+        </div>
+        <div class="form-group">
+            <label for="overnight">Overnight</label>
+            <input type="text" id="overnight" name="overnight">
+        </div>
+        <div class="form-group">
+            <label>Aware of SG Tools?</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="aware-of-sg-tools-yes" name="aware-of-sg-tools" value="yes">
+                <label for="aware-of-sg-tools-yes">Yes</label>
+                <input type="checkbox" id="aware-of-sg-tools-no" name="aware-of-sg-tools" value="no">
+                <label for="aware-of-sg-tools-no">No</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tools-applied">Tools Applied and Recommended</label>
+            <input type="text" id="tools-applied" name="tools-applied">
+        </div>
+        <div class="form-group">
+            <label>Spend Budget Explained? (IF NDL added)</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="spend-budget-explained-yes" name="spend-budget-explained" value="yes">
+                <label for="spend-budget-explained-yes">Yes</label>
+                <input type="checkbox" id="spend-budget-explained-no" name="spend-budget-explained" value="no">
+                <label for="spend-budget-explained-no">No</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>A recap has been provided and confirmed by customer</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="recap-provided-yes" name="recap-provided" value="yes">
+                <label for="recap-provided-yes">Yes</label>
+                <input type="checkbox" id="recap-provided-no" name="recap-provided" value="no">
+                <label for="recap-provided-no">No</label>
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
 
-				<meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+    <script>
+        document.getElementById('sgiForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
 
-				<title>LivePerson SDK client example 1</title>
+            formData.forEach((value, key) => {
+                if (data[key]) {
+                    if (!Array.isArray(data[key])) {
+                        data[key] = [data[key]];
+                    }
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            });
 
-				<script type="text/javascript" charset="utf-8" src="https://ssl.bing.com/widget/metrics.js"></script>
-				<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-				<script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+            // Correct the checkbox data to boolean
+            data['aware-of-sg-tools'] = data['aware-of-sg-tools'] === 'yes';
+            data['spend-budget-explained'] = data['spend-budget-explained'] === 'yes';
+            data['recap-provided'] = data['recap-provided'] === 'yes';
 
-				<script type="text/javascript">
+            console.log(JSON.stringify(data, null, 2));
+        });
+    </script>
 
-				var SDK = lpTag.agentSDK || {};
-
-				$(function() {
-
-				SDK.init({
-
-				notificationCallback: getLogFunction('INFO', 'Notification received!'),
-
-				visitorFocusedCallback: getLogFunction('INFO', 'Visitor Focused received!'),
-
-				visitorBlurredCallback: getLogFunction('INFO', 'Visitor Blurred received!')
-
-				});
-
-				});
-				  
-				function getLogFunction(type, message){
-				  
-				return function(data) {
-				  
-				if (typeof data === 'object') {
-				  
-				data = JSON.stringify(data, null, 2);
-				  
-				}
-				  
-				logger(type, message + ' The ' + type + ' data: ' + data);
-				  
-				}
-				  
-				}
-				  
-				function writeCommand() {
-				  
-				var commandVal = $(".commandInput").val();
-				
-				var ddl = document.getElementById("sc");
-				var selectedOption = ddl.options[ddl.selectedIndex];
-				var templateValue = selectedOption.getAttribute("template");
-				
-				if (templateValue == "1") {					
-					var data = {
-						json: {"type":"vertical","elements":[{"type":"image","url":"https://ibin.co/3eRIf7a5EekM.jpg","click":{"actions":[{"type":"publishText","text":"Offer"}]}},{"type":"text","text":"As you have not used our casino before we can offer you some free spins to get started"},{"type":"button","title":"Yes please","click":{"actions":[{"type":"publishText","text":"Yes please"}]}},{"type":"button","title":"No thanks","click":{"actions":[{"type":"publishText","text":"No thanks"}]}}]}
-					};
-				}
-				
-				else if (templateValue == "2") {
-					var data = {
-						json: {"type":"vertical","elements":[{"type":"image","url":"https://www.imageupload.co.uk/images/2018/05/21/eurovision-promo-betfair-min.jpg","click":{"actions":[{"type":"publishText","text":"Offer"}]}},{"type":"text","text":"With the Eurovision underway Betfair is paying 5 places. Place your bets soon."},{"type":"button","title":"Yes please","click":{"actions":[{"type":"publishText","text":"Yes please"}]}},{"type":"button","title":"No thanks","click":{"actions":[{"type":"publishText","text":"No thanks"}]}}]}
-					};
-				}
-				
-				else if (templateValue == "3") {
-					var data = {
-						json: {"type":"vertical","elements":[{"type":"image","url":"https://imagebin.ca/42Wvievin7K1"},{"type":"text","text":"How do you want to place your bet?"},{"type":"button","title":"Win","click":{"actions":[{"type":"publishText","text":"Win"}]}},{"type":"button","title":"Each Way","click":{"actions":[{"type":"publishText","text":"Each Way"}]}},{"type":"button","title":"Cancel","click":{"actions":[{"type":"publishText","text":"Cancel"}]}}]}
-					};
-				}
-					
-				SDK.command('Write StructuredContent', data, createCallback('Write'));
-				  
-				}
-				  
-				
-				  
-				function createCallback(name) {
-				  
-				return function(error) {
-				  
-				if (error) {
-				  
-				getLogFunction('ERROR', 'Error in ' + name + '!')(error);
-				  
-				} else {
-				  
-				getLogFunction('INFO', name + ' success!')();
-
-				}  
-				  
-				} 
-
-				}
-				  
-				function getSuccess(data){
-				  
-				$(".getResults").html(JSON.stringify(data));
-				  
-				getLogFunction('INFO', 'Get success!')(data);
-				  
-				}
-				  
-				function bindSuccess(data){
-				  
-				$(".bindResults").html(JSON.stringify(data)); 
-
-				getLogFunction('INFO', 'Bind success!')(data); 
-
-				}
-				  
-				function logger(type, text){
-				  
-				if (typeof text === 'object') {
-				  
-				text = JSON.stringify(text, null, 2);
-				  
-				}
-				  
-				var area = $(".logBox textarea");  
-
-				area.val(new Date().toTimeString() + ": " + type + " - " + text + '\n' + area.val());  
-
-				}
-				</script>
-		  
-		</head> 
-		
-	    
-		<body style="word-break: break-word">
-			
-				<h1>Structured Content</h1>
-			
-				<div class="commandBox">
-					
-					<strong>Choose a Template:</strong> 
-					
-					<select id="sc" onChange="writeCommand()">
-						<option template="1" value="freebet">Freebet</option>
-						<option template="2" value="euro">Eurovision</option>
-						<option template="3" value="bet">Bet</option>
-					</select>
-
-				</div> 						  
-		</body>
-    </html>
+</body>
+</html>
