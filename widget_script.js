@@ -10,22 +10,57 @@ dropdown.addEventListener('change', function() {
     commonFields.style.display = 'block';
     // Dynamically set the process name based on dropdown selection
     let processName = '';
+
+
     if (selectedOption === 'removeCard') {
         processName = 'CS_VA_CardRemovals';
         removeCardFields.style.display = 'block';
-    } else if (selectedOption === 'statementRequest') {
-        processName = 'Statement Request';
+        removeWalletFields.style.display = 'none';
         statementRequestFields.style.display = 'block';
+        voidBetFields.style.display = 'none';
+    } 
+    else if (selectedOption === 'statementRequest') {
+        processName = 'CS_Statement_Request';
+        statementRequestFields.style.display = 'block';
+        removeCardFields.style.display = 'none';
+        voidBetFields.style.display = 'none';
+        removeWalletFields.style.display = 'none';
         StatementPeriod.addEventListener('change', function() {
             const selectedType = this.value;
             if (selectedType == "Specific Dates") {
                 dates.style.display = 'block';
             } else{dates.style.display = 'none';}
         });
-    } else if (selectedOption === 'voidBet') {
-        processName = 'Void Bet';
+    } 
+    else if (selectedOption === 'voidBet') {
+        processName = 'CS_BetSettlement_VoidBet';
+        voidBetFields.style.display = 'block';
         removeCardFields.style.display = 'none';
+        statementRequestFields.style.display = 'none';
+        removeWalletFields.style.display = 'none';
     }
+    else if (selectedOption === 'removeWallet') {
+        processName = 'CS_VA_EWalletRemovals';
+        voidBetFields.style.display = 'none';
+        removeCardFields.style.display = 'none';
+        statementRequestFields.style.display = 'none';
+        removeWalletFields.style.display = 'block';
+    }
+    else if (selectedOption === 'cancelDeposit') {
+        processName = 'Fraud_DepositsCancelations';
+        voidBetFields.style.display = 'none';
+        removeCardFields.style.display = 'none';
+        statementRequestFields.style.display = 'none';
+        removeWalletFields.style.display = 'none';
+        removeTransactionFields.style.display = 'block';
+        ingoreTransactions.addEventListener('change', function() {
+            const selectedOption = this.value;
+            if (selectedOption == "Yes") {
+                transactionIdFields.style.display = 'block';
+            } else{transactionIdFields.style.display = 'none';}
+        });
+    }
+
 
     // Set the process name dynamically
     document.getElementById('submitButton').dataset.processName = processName;
@@ -34,11 +69,14 @@ dropdown.addEventListener('change', function() {
     submitButton.style.display = (selectedOption && processName) ? 'inline-block' : 'none';
 });
 
+
+
 // Event listener for the submit button
 submitButton.addEventListener('click', function() {
     const selectedOption = dropdown.value;
     const accountId = document.getElementById('accountId').value;
     const brand = document.getElementById('brand').value;
+    const conversationID = document.getElementById('conversationId').value;    
     const processName = submitButton.dataset.processName; // Get the dynamic process name
     var requestData;
 
@@ -51,6 +89,11 @@ submitButton.addEventListener('click', function() {
 
     if (!brand) {
         alert('Please select a brand.');
+        return;
+    }
+
+    if (!conversationID) {
+        alert('Please enter a conversation ID.');
         return;
     }
 
@@ -86,29 +129,15 @@ submitButton.addEventListener('click', function() {
 
         // Prepare the data to be sent in the body
         requestData = {
-          "itemData": {
-            "Name": processName,
-            "Priority": "Normal",
-            "Reference": brand + '_' + accountId,
-            "SpecificContent": {
-              "AccountID": accountId,
-              "AccountID@odata.type": "#String",
-              "Brand": brand,
-              "Brand@odata.type": "#String",
-              "Channel": "Co Pilot",
-              "Channel@odata.type": "#String",
-              "ConversationID": "tst",
-              "ConversationID@odata.type": "#String",
-              "ReasonForCardRemoval": reasonForRemoval,
-              "ReasonForCardRemoval@odata.type": "#String",
-              "PaymentMethod": PaymentMethod,
-              "PaymentMethod@odata.type": "#String",
-              "Last4DigitsOfCard": cardLast4,
-              "Last4DigitsOfCard@odata.type": "#String",
-              "POF_Received": POF,
-              "POF_Received@odata.type": "#String"
-            }
-          }
+            "processName": processName,
+            "AccountID": brand + '_' + accountId,
+            "Brand": brand,
+            "Channel": "Co Pilot",
+            "ConversationID": conversationID,
+            "ReasonForCardRemoval": reasonForRemoval,
+            "PaymentMethod": PaymentMethod,
+            "Last4DigitsOfCard": cardLast4,
+            "POF_Received": POF,
         };
 
     } else if (selectedOption === 'statementRequest'){
@@ -120,27 +149,70 @@ submitButton.addEventListener('click', function() {
 
         // Prepare the data to be sent in the body
         requestData = {
-          "itemData": {
-            "Name": processName,
-            "Priority": "Normal",
+            "processName": processName,
             "Reference": brand + '_' + accountId,
-            "SpecificContent": {
-              "AccountID": accountId,
-              "AccountID@odata.type": "#String",
-              "Brand": brand,
-              "Brand@odata.type": "#String",
-              "Channel": "Co Pilot",
-              "Channel@odata.type": "#String",
-              "ConversationID": "tst",
-              "ConversationID@odata.type": "#String",
-              "Start_Date": startDate,
-              "Start_Date@odata.type": "#String",
-              "End_Date": endDate,
-              "End_Date@odata.type": "#String",
-              "Statement_Type": StatementType,
-              "Statement_Type@odata.type": "#String"
-            }
-          }
+            "AccountID": accountId,
+            "Brand": brand,
+            "Channel": "Co Pilot",
+            "ConversationID": conversationID,
+            "Start_Date": startDate,
+            "End_Date": endDate,
+            "Statement_Type": StatementType           
+        };
+    } else if (selectedOption === 'voidBet'){
+
+        //Statement Request Elements
+        const betID = document.getElementById('betID').value;
+
+        // Validate Last 4 Digits of Card (4 digits required)
+        const betIdRegex = /^\bO\/\d{7,8}\/\d{7}\b$/;
+        if (!betID || !betIdRegex.test(betID)) {
+            alert('Please enter the bet ID in the correct format.');
+            return;
+        }
+
+        // Prepare the data to be sent in the body
+        requestData = {
+            "processName": processName,
+            "Reference": brand + '_' + accountId,
+            "AccountID": accountId,
+            "Brand": brand,
+            "Channel": "Co Pilot",
+            "ConversationID": conversationID,
+            "BetID": betID     
+        };
+    } else if (selectedOption === 'removeWallet'){
+
+        //Statement Request Elements
+        const walletType = document.getElementById('WalletType').value;
+        const POF = document.getElementById('POF2').value;
+
+        // Prepare the data to be sent in the body
+        requestData = {
+            "processName": processName,
+            "Reference": brand + '_' + accountId,
+            "AccountID": accountId,
+            "Brand": brand,
+            "Channel": "Co Pilot",
+            "ConversationID": conversationID,
+            "EWalletType": walletType,  
+            "POF_Received": POF    
+        };
+    } else if (selectedOption === 'cancelDeposit'){
+
+        //Statement Request Elements
+        const transactionID = document.getElementById('transactionID').value;
+        const POF = document.getElementById('POF2').value;
+
+        // Prepare the data to be sent in the body
+        requestData = {
+            "processName": processName,
+            "Reference": brand + '_' + accountId,
+            "AccountID": accountId,
+            "Brand": brand,
+            "Channel": "Co Pilot",
+            "ConversationID": conversationID,
+            "Ignore_Transaction": transactionID
         };
     }
 
@@ -148,56 +220,27 @@ submitButton.addEventListener('click', function() {
         alert('Please select "Remove Card" from the dropdown to submit.');
     }
 
+
+
     // Log the HTTP body to the console
     console.log('HTTP Request Body:', JSON.stringify(requestData));
 
 
-
-
-    // Authenticate UIPath
-    var Bearer;
-
-    fetch('https://cloud.uipath.com/identity_/connect/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'grant_type=client_credentials&client_id=d1eeff67-75c2-4d35-8e3d-f750f42628c8&client_secret=r^0y5tjLrz@qpTvN'
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        alert('Authenitcation successful!');
-        Bearer = data.access_token;
-        console.log(Bearer);
-
-        // Create Queue Item
-        fetch('https://cloud.uipath.com/flutteruki/Dev/orchestrator_/odata/Queues/UiPathODataSvc.AddQueueItem', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + Bearer,
-                'X-UIPATH-OrganizationUnitId':'1244159',
-                'Access-Control-Allow-Origin':'file:///Users/alex.murphy2/Desktop/EVA%20Widget/EVA_Widget_Test.html'
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            alert('Queue item creation successful!');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-
-
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-
+    // // Send to Power Automate
+    // fetch('https://prod-153.westeurope.logic.azure.com:443/workflows/5236e83c2ccb419b9a3b95c5f314d6df/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SyWdNRd97f7HsoMpUOoi_yeVug1wQT3k0tE3aI4rY4Y', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(requestData)
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     console.log('Success:', data);      
+    // })
+    // .catch(error => {
+    //     console.error('Error:', error);
+    //     alert('An error occurred. Please try again.');
+    // });
 
 });
