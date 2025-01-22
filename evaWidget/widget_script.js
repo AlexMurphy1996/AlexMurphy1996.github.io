@@ -1,203 +1,166 @@
-const dropdown = document.getElementById('actions');
-const removeCardFields = document.getElementById('removeCardFields');
-const submitButton = document.getElementById('submitButton');
-const StatementPeriod = document.getElementById('StatementPeriod');
-const dates = document.getElementById('dates');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVA Widget</title>
+    <link rel="stylesheet" href="./widgetStyle.css">
 
-// Event listener for dropdown selection change
-dropdown.addEventListener('change', function() {
-    const selectedOption = this.value;
-    commonFields.style.display = 'block';
-    // Dynamically set the process name based on dropdown selection
-    let processName = '';
-    if (selectedOption === 'removeCard') {
-        processName = 'CS_VA_CardRemovals';
-        removeCardFields.style.display = 'block';
-    } else if (selectedOption === 'statementRequest') {
-        processName = 'Statement Request';
-        statementRequestFields.style.display = 'block';
-        StatementPeriod.addEventListener('change', function() {
-            const selectedType = this.value;
-            if (selectedType == "Specific Dates") {
-                dates.style.display = 'block';
-            } else{dates.style.display = 'none';}
-        });
-    } else if (selectedOption === 'voidBet') {
-        processName = 'Void Bet';
-        removeCardFields.style.display = 'none';
-    }
+</head>
+<body>
+    <div class="container">
+        <h1>Paddy Power EVA Widget</h1>
+        
+        <!-- Dropdown of actions -->
 
-    // Set the process name dynamically
-    document.getElementById('submitButton').dataset.processName = processName;
+        <label for="actions">Choose an option:</label>
+        <select id="actions">
+            <option value="" disabled selected>Select an action</option>
+            <option value="removeCard">Remove Card</option>
+            <option value="statementRequest">Statement Request</option>
+            <option value="voidBet">Void Bet</option>
+            <option value="removeWallet">Remove eWallet</option>
+            <option value="cancelDeposit">Cancel Deposit</option>
+        </select>
 
-    // Show or hide the submit button based on selection
-    submitButton.style.display = (selectedOption && processName) ? 'inline-block' : 'none';
-});
+        <!-- Common Input Fields -->
+        <div class="input-fields" id="commonFields">
+            <label for="brand">Brand:</label>
+            <select id="brand" name="brand" required>
+                <option value="" disabled selected>Select Brand</option>
+                <option value="PP">PP</option>
+                <option value="BF">BF</option>
+                <option value="SBG">SBG</option>
+            </select>
 
-// Event listener for the submit button
-submitButton.addEventListener('click', function() {
-    const selectedOption = dropdown.value;
-    const accountId = document.getElementById('accountId').value;
-    const brand = document.getElementById('brand').value;
-    const processName = submitButton.dataset.processName; // Get the dynamic process name
-    var requestData;
-
-    // Validate accountId (between 4 and 8 digits)
-    const accountIdRegex = /^\d{4,8}$/;
-    if (!accountId || !accountIdRegex.test(accountId)) {
-        alert('Please enter a valid Account ID (between 4 and 8 digits).');
-        return;
-    }
-
-    if (!brand) {
-        alert('Please select a brand.');
-        return;
-    }
+            <label for="accountId">Account ID:</label>
+            <input type="text" id="accountId" name="accountId" pattern="\d{4,8}" maxlength="8" placeholder="Enter Customer Account ID" required title="Account ID must be between 4 and 8 digits">
+            <input type="text" id="conversationId" name="conversationId" placeholder="Enter Conversation ID" required title="Please enter the LivePerson conversation ID">
+        </div>
 
 
+        <!-- Remove Card Input Fields -->
+
+        <div class="input-fields" id="removeCardFields">
+
+            <label for="cardLast4">Last 4 Digits of Card:</label>
+            <input type="text" id="cardLast4" name="cardLast4" maxlength="4" pattern="\d{4}" placeholder="Enter 4 digits" required title="Last 4 digits of card must be numeric and 4 digits long">
+
+            <label for="reasonForRemoval">Reason For Removal:</label>
+            <select id="reasonForRemoval" name="reasonForRemoval" required>
+                <option value="" disabled selected>Select Reason</option>
+                <option value="Lost/Stolen">Lost/Stolen</option>
+                <option value="Expired">Expired</option>
+                <option value="Removing a Card to Add a New One">Removing a Card to Add a New One</option>
+                <option value="Something Else">Something Else</option>
+            </select>
+
+            <label for="POF">Proof of Funds Received:</label>
+            <select id="POF" name="POF" required>
+                <option value="" disabled selected>Yes/No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label for="ApplePay">Linked to Apple Pay:</label>
+            <select id="ApplePay" name="ApplePay" required>
+                <option value="" disabled selected>Yes/No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+        </div>
 
 
-    // Validate required fields if "Remove Card" is selected
-    if (selectedOption === 'removeCard') {
+        <!-- Statement Request Input Fields -->
 
-        // Remove Card Elements
-        const cardLast4 = document.getElementById('cardLast4').value;
-        const reasonForRemoval = document.getElementById('reasonForRemoval').value;
-        const POF = document.getElementById('POF').value;
-        const ApplePay = document.getElementById('ApplePay').value;
-        var PaymentMethod;
+        <div class="input-fields" id="statementRequestFields">
 
-        if (ApplePay == "Yes") {
-            PaymentMethod = "Apple Pay";
-        } else {
-            PaymentMethod = "Debit Card";
-        }
+            <label for="StatementType">Statement Type:</label>
+            <select id="StatementType" name="StatementType" required>
+                <option value="" disabled selected>Select statement type</option>
+                <option value="Deposits & Withdrawals">Deposits & Withdrawals</option>
+                <option value="Full customer statement">Full customer statement</option>
+                <option value="Statement of bets">Statement of bets</option>
+            </select>
 
-        // Validate Last 4 Digits of Card (4 digits required)
-        const cardLast4Regex = /^\d{4}$/;
-        if (!cardLast4 || !cardLast4Regex.test(cardLast4)) {
-            alert('Please enter the Last 4 digits of the card (exactly 4 digits).');
-            return;
-        }
-        if (!reasonForRemoval || !POF || !ApplePay) {
-            alert('Please fill in all fields before submitting.');
-            return;
-        }
+            <label for="StatementPeriod">Statement Period:</label>
+            <select id="StatementPeriod" name="StatementPeriod" required>
+                <option value="" disabled selected>Select statement period</option>
+                <option value="Since account creation">Since account creation</option>
+                <option value="Specific Dates">Specific Dates</option>
+            </select>
 
-        // Prepare the data to be sent in the body
-        requestData = {
-          "itemData": {
-            "Name": processName,
-            "Priority": "Normal",
-            "Reference": brand + '_' + accountId,
-            "SpecificContent": {
-              "AccountID": accountId,
-              "AccountID@odata.type": "#String",
-              "Brand": brand,
-              "Brand@odata.type": "#String",
-              "Channel": "Co Pilot",
-              "Channel@odata.type": "#String",
-              "ConversationID": "tst",
-              "ConversationID@odata.type": "#String",
-              "ReasonForCardRemoval": reasonForRemoval,
-              "ReasonForCardRemoval@odata.type": "#String",
-              "PaymentMethod": PaymentMethod,
-              "PaymentMethod@odata.type": "#String",
-              "Last4DigitsOfCard": cardLast4,
-              "Last4DigitsOfCard@odata.type": "#String",
-              "POF_Received": POF,
-              "POF_Received@odata.type": "#String"
-            }
-          }
-        };
+        </div>
 
-    } else if (selectedOption === 'statementRequest'){
+        <div class="input-fields" id="dates">
+            <label for="start">Start date:</label>
+            <input type="date" id="start" name="trip-start" max="2030-12-31" />
 
-        //Statement Request Elements
-        const StatementType = document.getElementById('StatementType').value;
-        var startDate = document.getElementById('start').value;
-        var endDate = document.getElementById('end').value;
-
-        // Prepare the data to be sent in the body
-        requestData = {
-          "itemData": {
-            "Name": processName,
-            "Priority": "Normal",
-            "Reference": brand + '_' + accountId,
-            "SpecificContent": {
-              "AccountID": accountId,
-              "AccountID@odata.type": "#String",
-              "Brand": brand,
-              "Brand@odata.type": "#String",
-              "Channel": "Co Pilot",
-              "Channel@odata.type": "#String",
-              "ConversationID": "tst",
-              "ConversationID@odata.type": "#String",
-              "Start_Date": startDate,
-              "Start_Date@odata.type": "#String",
-              "End_Date": endDate,
-              "End_Date@odata.type": "#String",
-              "Statement_Type": StatementType,
-              "Statement_Type@odata.type": "#String"
-            }
-          }
-        };
-    }
-
-    else {
-        alert('Please select "Remove Card" from the dropdown to submit.');
-    }
-
-    // Log the HTTP body to the console
-    console.log('HTTP Request Body:', JSON.stringify(requestData));
+            <label for="end">End date:</label>
+            <input type="date" id="end" name="trip-end" max="2030-12-31" />
+        </div>
 
 
+        <!-- Void Bet Input Fields -->
+
+        <div class="input-fields" id="voidBetFields">
+
+            <label for="betID">Bet ID:</label>
+            <input type="text" id="betID" name="betID" maxlength="20" pattern="\bO\/\d{7,8}\/\d{7}\b" placeholder="Enter the bet ID" required title="Please enter the bet ID in the right format">      
+
+        </div>
+
+        <!-- Remove eWallet Request Input Fields -->
+
+        <div class="input-fields" id="removeWalletFields">
+
+            <label for="WalletType">Statement Type:</label>
+            <select id="WalletType" name="WalletType" required>
+                <option value="" disabled selected>Select wallet type</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Neteller">Neteller</option>
+                <option value="Moneybookers">Moneybookers</option>
+                <option value="Much Better">Much Better</option>
+                <option value="Skrill">Skrill</option>
+                <option value="AstroPayBank">AstroPayBank</option>
+                <option value="AstroPayOneTouch">AstroPayOneTouch</option>
+            </select>
+
+            <label for="POF2">Proof of Funds Received:</label>
+            <select id="POF2" name="POF2" required>
+                <option value="" disabled selected>Yes/No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+        </div>
 
 
-    // Authenticate UIPath
-    var Bearer;
+        <!-- Cancel Deposit Request Input Fields -->
 
-    fetch('https://cloud.uipath.com/identity_/connect/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'grant_type=client_credentials&client_id=d1eeff67-75c2-4d35-8e3d-f750f42628c8&client_secret=r^0y5tjLrz@qpTvN'
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        alert('Authenitcation successful!');
-        Bearer = data.access_token;
-        console.log(Bearer);
+        <div class="input-fields" id="removeTransactionFields">
 
-        // Create Queue Item
-        fetch('https://cloud.uipath.com/flutteruki/Dev/orchestrator_/odata/Queues/UiPathODataSvc.AddQueueItem', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + Bearer,
-                'X-UIPATH-OrganizationUnitId':'1244159',
-                'Access-Control-Allow-Origin':'file:///Users/alex.murphy2/Desktop/EVA%20Widget/EVA_Widget_Test.html'
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            alert('Queue item creation successful!');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
+            <label for="ingoreTransactions">Ignore Transactions?</label>
+            <select id="ingoreTransactions" name="ingoreTransactions" required>
+                <option value="" disabled selected>Yes/No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+        </div>
+
+        <div class="input-fields" id="transactionIdFields">
+            <label for="transactionID">Transaction ID:</label>
+            <input type="text" id="transactionID" name="transactionID" maxlength="20" pattern="\bO\/\d{7,8}\/\d{7}\b" placeholder="Enter the transaction ID" required title="Please enter the transaction ID in the right format"> 
+        </div>
 
 
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
+        <!-- Submit Button -->
+        <button id="submitButton" style="display: none;">Submit</button>
+    </div>
 
+    <script type="text/javascript" src="./widget_script.js"></script>
 
-});
+</body>
+</html>
