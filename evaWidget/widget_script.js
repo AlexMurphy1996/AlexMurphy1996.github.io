@@ -16,7 +16,7 @@ dropdown.addEventListener('change', function() {
         processName = 'CS_VA_CardRemovals';
         removeCardFields.style.display = 'block';
         removeWalletFields.style.display = 'none';
-        statementRequestFields.style.display = 'block';
+        statementRequestFields.style.display = 'none';
         voidBetFields.style.display = 'none';
     } 
     else if (selectedOption === 'statementRequest') {
