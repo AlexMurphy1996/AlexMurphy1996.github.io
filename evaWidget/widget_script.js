@@ -216,8 +216,12 @@ submitButton.addEventListener('click', function() {
         };
     }
 
+    else if (selectedOption === ''){
+        alert('Please select "Action" from the dropdown to submit.');
+    }
+
     else {
-        alert('Please select "Remove Card" from the dropdown to submit.');
+        alert('Action is running. Please wait for response.');
     }
 
 
