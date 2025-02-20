@@ -214,15 +214,14 @@ submitButton.addEventListener('click', function() {
             "ConversationID": conversationID,
             "Ignore_Transaction": transactionID
         };
+        
     }
 
-    else if (selectedOption === ''){
+    else (selectedOption === ''){
         alert('Please select "Action" from the dropdown to submit.');
     }
 
-    else {
-        alert('Action is running. Please wait for response.');
-    }
+    alert('Action is running. Please wait for response.');
 
 
 
