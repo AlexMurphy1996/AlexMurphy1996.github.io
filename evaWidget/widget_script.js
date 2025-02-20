@@ -217,7 +217,7 @@ submitButton.addEventListener('click', function() {
         
     }
 
-    else (selectedOption === ''){
+    else {
         alert('Please select "Action" from the dropdown to submit.');
     }
 
