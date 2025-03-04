@@ -70,6 +70,21 @@ dropdown.addEventListener('change', function() {
 });
 
 
+var notifyWhenDone = function(err) {
+    if (err) {
+        // Do something with the error
+    }
+    // called when the bind is completed successfully,
+    // or when the action terminated with an error
+};
+//path to the engagementInfo from the sdk
+var pathToEngagementInfo = "engagementInfo";
+SDK.get(pathToEngagementInfo, onSuccess, onError);
+//path to the chat transcript from the sdk
+var pathToData = "chatTranscript";
+//bin the chat transcript so it will listen for new chatlines
+SDK.bind(pathToData, updateCallback, notifyWhenDone);
+//translate the agents message
 
 // Event listener for the submit button
 submitButton.addEventListener('click', function() {
