@@ -169,7 +169,7 @@
         var onSuccess = function(data) {
             //if the skill is not set, it will be a null value, not unskilled
             skill = data.skill;
-            console.log(skill);
+            console.log('skill:' + skill);
         };
         //error is called if we are not able to get the engagement infor from the sdk
         var onError = function(err) {who
@@ -187,9 +187,7 @@
             if (data.newValue.lines[0].source == 'visitor') {
                 //update the hidden div with the visitors chat line
                 document.getElementById('visitorChat2').innerHTML = chatLine;
-                //translate the visitors chat line based on skill group
                 
-                onComplete2();
             }
         };
         var notifyWhenDone = function(err) {
