@@ -168,8 +168,8 @@
         //success function for getting the engagement info from the sdk
         var onSuccess = function(data) {
             //if the skill is not set, it will be a null value, not unskilled
-            agentId = data.agentInfo.agentId;
-            console.log('skill:' + JSON.stringify(data));
+            agentId = JSON.stringify(data);
+            console.log('skill: ' + agentId);
             console.log(agentId);
             return agentId;
         };
