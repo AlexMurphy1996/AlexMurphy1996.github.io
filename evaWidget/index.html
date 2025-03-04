@@ -168,7 +168,7 @@
         //success function for getting the engagement info from the sdk
         var onSuccess = function(data) {
             //if the skill is not set, it will be a null value, not unskilled
-            agentId = JSON.stringify(data.agentInfo);
+            agentId = data.agentInfo.agentId;
             console.log('skill: ' + agentId);
             console.log(agentId);
         };
@@ -202,7 +202,6 @@
         var pathToEngagementInfo = "";
         SDK.get(pathToEngagementInfo, onSuccess, onError);
 
-        console.log('tst: ' + tst);
         //path to the chat transcript from the sdk
         var pathToData = "chatTranscript";
         //bin the chat transcript so it will listen for new chatlines
