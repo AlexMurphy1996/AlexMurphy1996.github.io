@@ -168,8 +168,9 @@
         //success function for getting the engagement info from the sdk
         var onSuccess = function(data) {
             //if the skill is not set, it will be a null value, not unskilled
-            skill = data.skill;
-            console.log('skill:' + skill);
+            agentId = data.agentId;
+            console.log('skill:' + data);
+            console.log(agentId);
         };
         //error is called if we are not able to get the engagement infor from the sdk
         var onError = function(err) {who
@@ -198,7 +199,7 @@
             // or when the action terminated with an error
         };
         //path to the engagementInfo from the sdk
-        var pathToEngagementInfo = "engagementInfo";
+        var pathToEngagementInfo = "agentInfo";
         SDK.get(pathToEngagementInfo, onSuccess, onError);
         //path to the chat transcript from the sdk
         var pathToData = "chatTranscript";
