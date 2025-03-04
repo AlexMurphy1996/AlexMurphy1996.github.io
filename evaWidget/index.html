@@ -200,8 +200,9 @@
         };
         //path to the engagementInfo from the sdk
         var pathToEngagementInfo = "agentInfo";
-        SDK.get(pathToEngagementInfo, onSuccess, onError);
-
+        var test;
+        test = SDK.get(pathToEngagementInfo, onSuccess, onError);
+        console.log(test);
         //path to the chat transcript from the sdk
         var pathToData = "chatTranscript";
         //bin the chat transcript so it will listen for new chatlines
