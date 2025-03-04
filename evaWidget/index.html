@@ -171,7 +171,6 @@
             agentId = JSON.stringify(data);
             console.log('skill: ' + agentId);
             console.log(agentId);
-            return agentId;
         };
         //error is called if we are not able to get the engagement infor from the sdk
         var onError = function(err) {who
@@ -209,7 +208,6 @@
         //bin the chat transcript so it will listen for new chatlines
         SDK.bind(pathToData, updateCallback, notifyWhenDone);
         
-        console.log('lala: ' + agentId); 
     </script>
     <script type="text/javascript" src="widget_script.js"></script>
 
