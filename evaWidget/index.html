@@ -169,7 +169,7 @@
         var onSuccess = function(data) {
             //if the skill is not set, it will be a null value, not unskilled
             agentId = data.agentInfo.agentId;
-            console.log('skill:' + data);
+            console.log('skill:' + JSON.stringify(data));
             console.log(agentId);
             return agentId;
         };
