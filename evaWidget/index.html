@@ -161,6 +161,54 @@
         <button id="submitButton" style="display: none;">Submit</button>
     </div>
     <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+    <script>
+        var skill;
+        var SDK = lpTag.agentSDK;
+        SDK.init();
+        //success function for getting the engagement info from the sdk
+        var onSuccess = function(data) {
+            //if the skill is not set, it will be a null value, not unskilled
+            skill = data.skill;
+            console.log(skill);
+        };
+        //error is called if we are not able to get the engagement infor from the sdk
+        var onError = function(err) {who
+            // Do something with the error
+            console.log(err);
+        };
+        var updateCallback = function(data) {
+            // called each time the value is updated; if there is an existing value when bind
+            //is called - this callback will be called with the existing value
+            //console.log(data.newValue);
+            //strip the html elements from the chat line
+            var chatLine = data.newValue.lines[0].text.replace(/(<p[^>]*>|<\/p>)/g, "");
+            //console.log(chatLine);
+            //add new chat line to page if it is from the visitor
+            if (data.newValue.lines[0].source == 'visitor') {
+                //update the hidden div with the visitors chat line
+                document.getElementById('visitorChat2').innerHTML = chatLine;
+                //translate the visitors chat line based on skill group
+                
+                onComplete2();
+            }
+        };
+        var notifyWhenDone = function(err) {
+            if (err) {
+                // Do something with the error
+            }
+            // called when the bind is completed successfully,
+            // or when the action terminated with an error
+        };
+        //path to the engagementInfo from the sdk
+        var pathToEngagementInfo = "engagementInfo";
+        SDK.get(pathToEngagementInfo, onSuccess, onError);
+        //path to the chat transcript from the sdk
+        var pathToData = "chatTranscript";
+        //bin the chat transcript so it will listen for new chatlines
+        SDK.bind(pathToData, updateCallback, notifyWhenDone);
+        
+        console.log('lala'); 
+    </script>
     <script type="text/javascript" src="widget_script.js"></script>
 
 </body>
