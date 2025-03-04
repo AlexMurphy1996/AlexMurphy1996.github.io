@@ -171,6 +171,7 @@
             agentId = data.agentId;
             console.log('skill: ' + agentId);
             console.log(agentId);
+            return agentId;
         };
         //error is called if we are not able to get the engagement infor from the sdk
         var onError = function(err) {who
@@ -202,7 +203,7 @@
         var pathToEngagementInfo = "agentInfo";
         var test;
         test = SDK.get(pathToEngagementInfo, onSuccess, onError);
-        console.log(test);
+        console.log(onSuccess);
         //path to the chat transcript from the sdk
         var pathToData = "chatTranscript";
         //bin the chat transcript so it will listen for new chatlines
