@@ -76,7 +76,6 @@ submitButton.addEventListener('click', function() {
     const selectedOption = dropdown.value;
     const accountId = document.getElementById('accountId').value;
     const brand = document.getElementById('brand').value;
-    const conversationID = document.getElementById('conversationId').value;    
     const processName = submitButton.dataset.processName; // Get the dynamic process name
     var requestData;
 
@@ -91,12 +90,6 @@ submitButton.addEventListener('click', function() {
         alert('Please select a brand.');
         return;
     }
-
-    if (!conversationID) {
-        alert('Please enter a conversation ID.');
-        return;
-    }
-
 
 
 
