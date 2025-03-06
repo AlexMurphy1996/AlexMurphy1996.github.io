@@ -186,7 +186,7 @@
         // Wait for a delay before using agentId (ensuring it’s assigned)
         setTimeout(function() {
             console.log("Outside function: ", agentId); // Should log correctly after a delay
-        }, 20000);
+        }, 2000);
         // Fetch engagement info
         SDK.get(pathToEngagementInfo, onSuccess, onError);
     </script>
