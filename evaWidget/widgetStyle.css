@@ -1,31 +1,39 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4; /* Light background */
+/* Ensure full viewport fit */
+html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden; /* Prevents scrolling */
+    width: 100vw; /* Fills iframe width */
+    height: 100vh; /* Fills iframe height */
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     color: #333;
-    height: 100vh;
 }
 
+/* Centered heading */
 h1 {
-    color: #0A84FF; /* Flutter Blue */
+    color: #0A84FF;
     font-weight: bold;
     text-align: center;
     margin-bottom: 20px;
 }
 
+/* Main container */
 .container {
     background-color: #fff;
-    padding: 10% 10%;
+    padding: 5%; /* Reduce padding for better fit */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 70%; /* Adjust width to 70% */
+    width: 90%; /* Make it more responsive */
     max-width: 600px;
+    max-height: 90vh; /* Prevent overflow */
+    overflow-y: auto; /* Enable scrolling inside container if needed */
 }
 
+/* Labels */
 label {
     font-size: 16px;
     font-weight: bold;
@@ -33,6 +41,7 @@ label {
     color: #333;
 }
 
+/* Inputs and Selects */
 .container select,
 .container input {
     width: 100%;
@@ -55,14 +64,15 @@ label {
 
 .container select:focus,
 .container input:focus {
-    border-color: #0A84FF; /* Flutter Blue */
+    border-color: #0A84FF;
     outline: none;
 }
 
+/* Button */
 button {
     padding: 15px 20px;
     font-size: 18px;
-    background-color: #0A84FF; /* Flutter Blue */
+    background-color: #0A84FF;
     color: white;
     border: none;
     border-radius: 6px;
@@ -71,23 +81,23 @@ button {
 }
 
 button:hover {
-    background-color: #085098; /* Darker blue for hover effect */
+    background-color: #085098;
 }
 
+/* Hide input fields initially */
 .input-fields {
     display: none;
 }
 
-.input-fields label {
-    font-size: 16px;
-    margin-bottom: 8px;
-}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 4%;
+    }
 
-.input-fields input,
-.input-fields select {
-    margin-bottom: 20px;
-}
-
-.container select {
-    font-weight: bold;
+    button {
+        font-size: 16px;
+        padding: 12px;
+    }
 }
