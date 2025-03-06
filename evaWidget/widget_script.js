@@ -12,7 +12,7 @@ const ignoreTransactions = document.getElementById('ignoreTransactions');
 const transactionIdFields = document.getElementById('transactionIdFields');
 const commonFields = document.getElementById('commonFields');
 
-// Utility function to toggle field visibility
+// Function to toggle visibility of form fields
 const toggleFields = (visibleField) => {
     const allFields = [
         removeCardFields, removeWalletFields, statementRequestFields,
@@ -20,17 +20,8 @@ const toggleFields = (visibleField) => {
     ];
 
     allFields.forEach(field => {
-        field.classList.toggle('hidden', field !== visibleField);
+        field.style.display = (field === visibleField) ? 'block' : 'none';
     });
-};
-
-// Validate input fields
-const validateField = (regex, field, errorMessage) => {
-    if (!regex.test(field.value)) {
-        alert(errorMessage);
-        return false;
-    }
-    return true;
 };
 
 // Event listener for dropdown selection change
@@ -41,8 +32,7 @@ dropdown.addEventListener('change', function () {
     document.querySelector('.form-container').scrollTo({ top: 0, behavior: 'smooth' });
 
     let processName = '';
-    
-    // Switch based on selected option
+
     switch (selectedOption) {
         case 'removeCard':
             processName = 'CS_VA_CardRemovals';
@@ -52,6 +42,7 @@ dropdown.addEventListener('change', function () {
         case 'statementRequest':
             processName = 'CS_Statement_Request';
             toggleFields(statementRequestFields);
+            
             StatementPeriod.addEventListener('change', function () {
                 dates.style.display = this.value === 'Specific Dates' ? 'block' : 'none';
             });
@@ -70,6 +61,7 @@ dropdown.addEventListener('change', function () {
         case 'cancelDeposit':
             processName = 'Fraud_DepositsCancelations';
             toggleFields(removeTransactionFields);
+
             ignoreTransactions.addEventListener('change', function () {
                 transactionIdFields.style.display = this.value === 'Yes' ? 'block' : 'none';
             });
@@ -94,9 +86,11 @@ submitButton.addEventListener('click', function () {
     let requestData = {};
 
     // Validate account ID (4 to 8 digits)
-    if (!validateField(/^\d{4,8}$/, document.getElementById('accountId'), 'Please enter a valid Account ID (4 to 8 digits).')) return;
-    
-    // Validate brand selection
+    if (!/^\d{4,8}$/.test(accountId)) {
+        alert('Please enter a valid Account ID (4 to 8 digits).');
+        return;
+    }
+
     if (!brand) {
         alert('Please select a brand.');
         return;
@@ -111,7 +105,10 @@ submitButton.addEventListener('click', function () {
             const ApplePay = document.getElementById('ApplePay').value;
             const PaymentMethod = ApplePay === 'Yes' ? 'Apple Pay' : 'Debit Card';
 
-            if (!validateField(/^\d{4}$/, document.getElementById('cardLast4'), 'Please enter the Last 4 digits of the card (exactly 4 digits).')) return;
+            if (!/^\d{4}$/.test(cardLast4)) {
+                alert('Please enter the Last 4 digits of the card (exactly 4 digits).');
+                return;
+            }
             if (!reasonForRemoval || !POF || !ApplePay) {
                 alert('Please fill in all fields before submitting.');
                 return;
@@ -119,7 +116,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                AccountID: `${brand}_${accountId}`,
+                AccountID: ${brand}_${accountId},
                 Brand: brand,
                 Channel: 'Co Pilot',
                 ConversationID: window.conversationId,
@@ -138,7 +135,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: `${brand}_${accountId}`,
+                Reference: ${brand}_${accountId},
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -152,11 +149,14 @@ submitButton.addEventListener('click', function () {
 
         case 'voidBet': {
             const betID = document.getElementById('betID').value;
-            if (!validateField(/^\bO\/\d{7,8}\/\d{7}\b$/, document.getElementById('betID'), 'Please enter the bet ID in the correct format.')) return;
+            if (!/^\bO\/\d{7,8}\/\d{7}\b$/.test(betID)) {
+                alert('Please enter the bet ID in the correct format.');
+                return;
+            }
 
             requestData = {
                 processName,
-                Reference: `${brand}_${accountId}`,
+                Reference: ${brand}_${accountId},
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -172,7 +172,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: `${brand}_${accountId}`,
+                Reference: ${brand}_${accountId},
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -188,7 +188,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: `${brand}_${accountId}`,
+                Reference: ${brand}_${accountId},
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
