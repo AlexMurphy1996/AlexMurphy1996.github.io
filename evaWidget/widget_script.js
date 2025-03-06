@@ -20,18 +20,24 @@ const toggleFields = (visibleField) => {
     ];
 
     // Ensure that the common fields are always visible
-    commonFields.style.display = 'block';
+    commonFields.style.display = 'block';  // This should always show
 
+    // Ensure all fields are initially hidden
     allFields.forEach(field => {
-        field.style.display = (field === visibleField) ? 'block' : 'none';
+        field.style.display = 'none';
     });
+
+    // Display the selected field only
+    if (visibleField) {
+        visibleField.style.display = 'block';
+    }
 };
 
 // Event listener for dropdown selection change
 dropdown.addEventListener('change', function () {
     const selectedOption = this.value;
 
-    // Scroll to top of form when changing selection
+    // Scroll to the top of the form container when changing selection
     document.querySelector('.form-container').scrollTo({ top: 0, behavior: 'smooth' });
 
     let processName = '';
