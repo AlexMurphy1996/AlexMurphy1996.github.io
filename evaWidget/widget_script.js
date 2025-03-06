@@ -96,6 +96,17 @@ submitButton.addEventListener('click', function () {
         return;
     }
 
+    // Validate Date Range for Statement Request
+    if (selectedOption === 'statementRequest') {
+        const startDate = document.getElementById('start').value;
+        const endDate = document.getElementById('end').value;
+        
+        if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+            alert('End date cannot be earlier than start date.');
+            return;
+        }
+    }
+
     // Prepare request data based on selection
     switch (selectedOption) {
         case 'removeCard': {
@@ -203,6 +214,10 @@ submitButton.addEventListener('click', function () {
             return;
     }
 
+    // Show loading indicator and hide the submit button
+    submitButton.disabled = true;
+    submitButton.innerText = 'Submitting...';
+
     alert('Action is running. Please wait for response.');
     console.log('HTTP Request Body:', JSON.stringify(requestData));
 
@@ -213,11 +228,24 @@ submitButton.addEventListener('click', function () {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        alert('Success! Your request has been processed.');
+    })
     .catch(error => {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
+    })
+    .finally(() => {
+        // Re-enable submit button after request completes
+        submitButton.disabled = false;
+        submitButton.innerText = 'Submit';
     });
     */
 });
