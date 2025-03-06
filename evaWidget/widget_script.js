@@ -28,8 +28,6 @@ const toggleFields = (visibleField) => {
 dropdown.addEventListener('change', function () {
     const selectedOption = this.value;
     commonFields.style.display = 'block';
-    // Scroll to top of form when changing selection
-    document.querySelector('.form-container').scrollTo({ top: 0, behavior: 'smooth' });
 
     let processName = '';
 
@@ -116,7 +114,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                AccountID: ${brand}_${accountId},
+                AccountID: `${brand}_${accountId}`,
                 Brand: brand,
                 Channel: 'Co Pilot',
                 ConversationID: window.conversationId,
@@ -135,7 +133,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: ${brand}_${accountId},
+                Reference: `${brand}_${accountId}`,
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -156,7 +154,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: ${brand}_${accountId},
+                Reference: `${brand}_${accountId}`,
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -172,7 +170,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: ${brand}_${accountId},
+                Reference: `${brand}_${accountId}`,
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
@@ -188,7 +186,7 @@ submitButton.addEventListener('click', function () {
 
             requestData = {
                 processName,
-                Reference: ${brand}_${accountId},
+                Reference: `${brand}_${accountId}`,
                 AccountID: accountId,
                 Brand: brand,
                 Channel: 'Co Pilot',
