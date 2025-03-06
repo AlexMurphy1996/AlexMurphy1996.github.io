@@ -101,3 +101,27 @@ button:hover {
         padding: 12px;
     }
 }
+
+/* Ensure the form expands to fit content */
+.form-container {
+    max-height: 100vh; /* Ensure it fits within the screen */
+    overflow-y: auto;  /* Enable scrolling if necessary */
+    transition: max-height 0.3s ease-in-out;
+}
+
+/* Prevent unnecessary scrolling by reducing spacing */
+.form-section {
+    margin-bottom: 10px; /* Reduce space between sections */
+    padding: 15px; /* Keep content tidy */
+}
+
+/* Ensure fields are visible */
+.show {
+    display: block !important;
+}
+
+/* Hide unused fields */
+.hide {
+    display: none !important;
+}
+
