@@ -169,8 +169,7 @@
     
         // Success function for getting the engagement info
         var onSuccess = function(data) {
-            agentId = data.conversationId;
-            return agentId;
+            window.conversationId = data.rtSessionId;
         };
     
         // Error function
