@@ -28,6 +28,8 @@ const toggleFields = (visibleField) => {
 dropdown.addEventListener('change', function () {
     const selectedOption = this.value;
     commonFields.style.display = 'block';
+    // Scroll to top of form when changing selection
+    document.querySelector('.form-container').scrollTo({ top: 0, behavior: 'smooth' });
 
     let processName = '';
 
