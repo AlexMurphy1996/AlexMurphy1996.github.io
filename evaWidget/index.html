@@ -168,26 +168,26 @@
         var skill;
         var SDK = lpTag.agentSDK;
         SDK.init();
-        //success function for getting the engagement info from the sdk
+    
+        // Success function for getting the engagement info
         var onSuccess = function(data) {
-            //if the skill is not set, it will be a null value, not unskilled
             agentId = data.agentId;
-            console.log('skill: ' + agentId);
-            console.log(agentId);
+            console.log('Skill: ' + agentId);
             return agentId;
         };
-        //error is called if we are not able to get the engagement infor from the sdk
-        var onError = function(err) {who
-            // Do something with the error
+    
+        // Error function
+        var onError = function(err) {
             console.log(err);
         };
-        //path to the engagementInfo from the sdk
+    
+        // Path to the engagementInfo from the SDK
         var pathToEngagementInfo = "agentInfo";
-        var test;
-        test = SDK.get(pathToEngagementInfo, onSuccess, onError);
-        console.log(onSuccess);
+        console.log('Skill: ' + agentId);
+        // Fetch engagement info
+        SDK.get(pathToEngagementInfo, onSuccess, onError);
     </script>
-    </script>
+
 
 </body>
 </html>
