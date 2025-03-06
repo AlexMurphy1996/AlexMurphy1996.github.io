@@ -170,6 +170,7 @@
         // Success function for getting the engagement info
         var onSuccess = function(data) {
             window.conversationId = data.rtSessionId;
+            console.log('Skill:', window.conversationId);
         };
     
         // Error function
