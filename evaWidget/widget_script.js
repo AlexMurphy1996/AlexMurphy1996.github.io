@@ -229,31 +229,8 @@ submitButton.addEventListener('click', function() {
     console.log('HTTP Request Body:', JSON.stringify(requestData));
 
 
-    var skill;
-    var SDK = lpTag.agentSDK;
-    SDK.init();
-    //success function for getting the engagement info from the sdk
-    var onSuccess = function(data) {
-        //if the skill is not set, it will be a null value, not unskilled
-        agentId = data.agentId;
-        console.log('skill: ' + agentId);
-        console.log(agentId);
-        return agentId;
-    };
-    //error is called if we are not able to get the engagement infor from the sdk
-    var onError = function(err) {who
-        // Do something with the error
-        console.log(err);
-    };
-    //path to the engagementInfo from the sdk
-    var pathToEngagementInfo = "agentInfo";
-    var test;
-    test = SDK.get(pathToEngagementInfo, onSuccess, onError);
-    console.log(onSuccess);
-    //path to the chat transcript from the sdk
-    var pathToData = "chatTranscript";
-    //bin the chat transcript so it will listen for new chatlines
-    SDK.bind(pathToData, updateCallback, notifyWhenDone);
+
+
 
     // // Send to Power Automate
     // fetch('https://prod-153.westeurope.logic.azure.com:443/workflows/5236e83c2ccb419b9a3b95c5f314d6df/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SyWdNRd97f7HsoMpUOoi_yeVug1wQT3k0tE3aI4rY4Y', {
