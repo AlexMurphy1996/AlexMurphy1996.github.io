@@ -19,6 +19,9 @@ const toggleFields = (visibleField) => {
         voidBetFields, removeTransactionFields
     ];
 
+    // Ensure that the common fields are always visible
+    commonFields.style.display = 'block';
+
     allFields.forEach(field => {
         field.style.display = (field === visibleField) ? 'block' : 'none';
     });
@@ -27,7 +30,7 @@ const toggleFields = (visibleField) => {
 // Event listener for dropdown selection change
 dropdown.addEventListener('change', function () {
     const selectedOption = this.value;
-    commonFields.style.display = 'block';
+
     // Scroll to top of form when changing selection
     document.querySelector('.form-container').scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -42,7 +45,8 @@ dropdown.addEventListener('change', function () {
         case 'statementRequest':
             processName = 'CS_Statement_Request';
             toggleFields(statementRequestFields);
-            
+
+            // Event listener for StatementPeriod change
             StatementPeriod.addEventListener('change', function () {
                 dates.style.display = this.value === 'Specific Dates' ? 'block' : 'none';
             });
@@ -62,13 +66,14 @@ dropdown.addEventListener('change', function () {
             processName = 'Fraud_DepositsCancelations';
             toggleFields(removeTransactionFields);
 
+            // Event listener for ignoreTransactions change
             ignoreTransactions.addEventListener('change', function () {
                 transactionIdFields.style.display = this.value === 'Yes' ? 'block' : 'none';
             });
             break;
 
         default:
-            toggleFields(null);
+            toggleFields(null);  // Hide all fields when no valid option is selected
             break;
     }
 
