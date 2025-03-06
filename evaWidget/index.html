@@ -162,17 +162,14 @@
     </div>
     <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
-    <script type="text/javascript" src="widget_script.js"></script>
-
     <script>
-        var agentId;
+        window.conversationId = null;
         var SDK = lpTag.agentSDK;
         SDK.init();
     
         // Success function for getting the engagement info
         var onSuccess = function(data) {
-            agentId = data.agentId;
-            console.log('Skill: ' + agentId);
+            agentId = data.conversationId;
             return agentId;
         };
     
@@ -182,15 +179,15 @@
         };
     
         // Path to the engagementInfo from the SDK
-        var pathToEngagementInfo = "agentInfo";
+        var pathToEngagementInfo = "chatInfo";
         // Wait for a delay before using agentId (ensuring it’s assigned)
         setTimeout(function() {
-            console.log("Outside function: ", agentId); // Should log correctly after a delay
+            console.log("Outside function: ", window.conversationId); // Should log correctly after a delay
         }, 2000);
         // Fetch engagement info
         SDK.get(pathToEngagementInfo, onSuccess, onError);
     </script>
-
+    <script type="text/javascript" src="widget_script.js"></script>
 
 </body>
 </html>
