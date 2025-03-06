@@ -20,9 +20,24 @@ const toggleFields = (visibleField) => {
     ];
 
     allFields.forEach(field => {
-        field.style.display = (field === visibleField) ? 'block' : 'none';
+        if (field) {
+            field.style.display = (field === visibleField) ? 'block' : 'none';
+        }
     });
 };
+
+// Ensure event listeners are only added once
+if (StatementPeriod) {
+    StatementPeriod.addEventListener('change', function () {
+        if (dates) dates.style.display = this.value === 'Specific Dates' ? 'block' : 'none';
+    });
+}
+
+if (ignoreTransactions) {
+    ignoreTransactions.addEventListener('change', function () {
+        if (transactionIdFields) transactionIdFields.style.display = this.value === 'Yes' ? 'block' : 'none';
+    });
+}
 
 // Event listener for dropdown selection change
 dropdown.addEventListener('change', function () {
@@ -40,10 +55,6 @@ dropdown.addEventListener('change', function () {
         case 'statementRequest':
             processName = 'CS_Statement_Request';
             toggleFields(statementRequestFields);
-            
-            StatementPeriod.addEventListener('change', function () {
-                dates.style.display = this.value === 'Specific Dates' ? 'block' : 'none';
-            });
             break;
 
         case 'voidBet':
@@ -59,10 +70,6 @@ dropdown.addEventListener('change', function () {
         case 'cancelDeposit':
             processName = 'Fraud_DepositsCancelations';
             toggleFields(removeTransactionFields);
-
-            ignoreTransactions.addEventListener('change', function () {
-                transactionIdFields.style.display = this.value === 'Yes' ? 'block' : 'none';
-            });
             break;
 
         default:
@@ -70,18 +77,24 @@ dropdown.addEventListener('change', function () {
             break;
     }
 
-    // Set process name and show submit button if an action is selected
     submitButton.dataset.processName = processName;
     submitButton.style.display = processName ? 'inline-block' : 'none';
 });
 
 // Event listener for form submission
-submitButton.addEventListener('click', function () {
+submitButton.addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent default form submission
+    
     const selectedOption = dropdown.value;
     const accountId = document.getElementById('accountId').value;
     const brand = document.getElementById('brand').value;
     const processName = submitButton.dataset.processName;
     let requestData = {};
+
+    if (!processName) {
+        alert('Invalid action selected.');
+        return;
+    }
 
     // Validate account ID (4 to 8 digits)
     if (!/^\d{4,8}$/.test(accountId)) {
@@ -94,7 +107,6 @@ submitButton.addEventListener('click', function () {
         return;
     }
 
-    // Prepare request data based on selection
     switch (selectedOption) {
         case 'removeCard': {
             const cardLast4 = document.getElementById('cardLast4').value;
@@ -147,7 +159,7 @@ submitButton.addEventListener('click', function () {
 
         case 'voidBet': {
             const betID = document.getElementById('betID').value;
-            if (!/^\bO\/\d{7,8}\/\d{7}\b$/.test(betID)) {
+            if (!/^O\/\d{7,8}\/\d{7}$/.test(betID)) {
                 alert('Please enter the bet ID in the correct format.');
                 return;
             }
@@ -181,21 +193,6 @@ submitButton.addEventListener('click', function () {
             break;
         }
 
-        case 'cancelDeposit': {
-            const transactionID = document.getElementById('transactionID').value;
-
-            requestData = {
-                processName,
-                Reference: `${brand}_${accountId}`,
-                AccountID: accountId,
-                Brand: brand,
-                Channel: 'Co Pilot',
-                ConversationID: window.conversationId,
-                Ignore_Transaction: transactionID
-            };
-            break;
-        }
-
         default:
             alert('Please select an action from the dropdown before submitting.');
             return;
@@ -203,19 +200,4 @@ submitButton.addEventListener('click', function () {
 
     alert('Action is running. Please wait for response.');
     console.log('HTTP Request Body:', JSON.stringify(requestData));
-
-    // Uncomment to send the data
-    /*
-    fetch('https://your-api-endpoint.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-    */
 });
