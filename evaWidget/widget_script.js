@@ -26,6 +26,20 @@ const toggleFields = (visibleField) => {
     });
 };
 
+// Function to reset form fields
+const resetFields = () => {
+    document.querySelectorAll('input, select').forEach(element => {
+        if (element.type === 'checkbox' || element.type === 'radio') {
+            element.checked = false;
+        } else {
+            element.value = '';
+        }
+    });
+    toggleFields(null);
+    commonFields.style.display = 'none';
+    submitButton.style.display = 'none';
+};
+
 // Ensure event listeners are only added once
 if (StatementPeriod) {
     StatementPeriod.addEventListener('change', function () {
@@ -198,6 +212,24 @@ submitButton.addEventListener('click', function (event) {
             return;
     }
 
+        // Uncomment to send the data
+    /*
+    fetch('https://your-api-endpoint.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+    */
+
+    // Reset fields after submission
+    resetFields();
+    
     alert('Action is running. Please wait for response.');
     console.log('HTTP Request Body:', JSON.stringify(requestData));
 });
