@@ -133,7 +133,7 @@ submitButton.addEventListener('click', function() {
             "AccountID": brand + '_' + accountId,
             "Brand": brand,
             "Channel": "Co Pilot",
-            "ConversationID": conversationID,
+            "ConversationID": window.conversationId,
             "ReasonForCardRemoval": reasonForRemoval,
             "PaymentMethod": PaymentMethod,
             "Last4DigitsOfCard": cardLast4,
@@ -154,7 +154,7 @@ submitButton.addEventListener('click', function() {
             "AccountID": accountId,
             "Brand": brand,
             "Channel": "Co Pilot",
-            "ConversationID": conversationID,
+            "ConversationID": window.conversationId,
             "Start_Date": startDate,
             "End_Date": endDate,
             "Statement_Type": StatementType           
@@ -178,7 +178,7 @@ submitButton.addEventListener('click', function() {
             "AccountID": accountId,
             "Brand": brand,
             "Channel": "Co Pilot",
-            "ConversationID": conversationID,
+            "ConversationID": window.conversationId,
             "BetID": betID     
         };
     } else if (selectedOption === 'removeWallet'){
@@ -194,7 +194,7 @@ submitButton.addEventListener('click', function() {
             "AccountID": accountId,
             "Brand": brand,
             "Channel": "Co Pilot",
-            "ConversationID": conversationID,
+            "ConversationID": window.conversationId,
             "EWalletType": walletType,  
             "POF_Received": POF    
         };
@@ -211,7 +211,7 @@ submitButton.addEventListener('click', function() {
             "AccountID": accountId,
             "Brand": brand,
             "Channel": "Co Pilot",
-            "ConversationID": conversationID,
+            "ConversationID": window.conversationId,
             "Ignore_Transaction": transactionID
         };
         
