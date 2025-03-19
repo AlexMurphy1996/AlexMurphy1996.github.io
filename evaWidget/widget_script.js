@@ -103,6 +103,8 @@ submitButton.addEventListener('click', function (event) {
     const accountId = document.getElementById('accountId').value;
     const brand = document.getElementById('brand').value;
     const processName = submitButton.dataset.processName;
+    const assistantId = 'dbb16052-95ac-4b76-a679-8006624838b3';
+    const sessionId: 'eyJzZXNzaW9uX3N0YXJ0X3RpbWUiOiIyMDI1LTAzLTE5VDEwOjA2OjExLjkyMVoiLCJzZXNzaW9uX2lkIjoiODg4MWQ0N2QtOTkxNC00OGQwLWEzYTItZjhmMWI4ZDQzYzBiIiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6ImRiYjE2MDUyLTk1YWMtNGI3Ni1hNjc5LTgwMDY2MjQ4MzhiMyIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoicm9vdCJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJyZXNwb25zZV8yMl8xNjM0MjAzMjI2NzcyIjp7IjAiOlswXX0sInJlc3BvbnNlXzhfMTYzNDIwNTk2Mjg5NCI6eyIwIjpbMF19LCJub2RlXzdfMTYzNDIwNjQxMDgwNSI6eyIwIjpbMF19LCJyZXNwb25zZV85XzE2MzQyMDYwNTEyNTUiOlswXX0sImxhc3RfYnJhbmNoX25vZGUiOiJub2RlXzNfMTYzNDYyOTA2ODcyOSJ9'
     let requestData = {};
 
     if (!processName) {
@@ -148,6 +150,8 @@ submitButton.addEventListener('click', function (event) {
                 PaymentMethod,
                 Last4DigitsOfCard: cardLast4,
                 POF_Received: POF,
+                AssistantID: assistantId,
+                SessionID: sessionId
             };
             break;
         }
@@ -166,7 +170,9 @@ submitButton.addEventListener('click', function (event) {
                 ConversationID: window.conversationId,
                 Start_Date: startDate,
                 End_Date: endDate,
-                Statement_Type: StatementType
+                Statement_Type: StatementType,
+                AssistantID: assistantId,
+                SessionID: sessionId
             };
             break;
         }
@@ -185,7 +191,9 @@ submitButton.addEventListener('click', function (event) {
                 Brand: brand,
                 Channel: 'Co Pilot',
                 ConversationID: window.conversationId,
-                BetID: betID
+                BetID: betID,
+                AssistantID: assistantId,
+                SessionID: sessionId
             };
             break;
         }
@@ -202,7 +210,9 @@ submitButton.addEventListener('click', function (event) {
                 Channel: 'Co Pilot',
                 ConversationID: window.conversationId,
                 EWalletType: walletType,
-                POF_Received: POF
+                POF_Received: POF,
+                AssistantID: assistantId,
+                SessionID: sessionId
             };
             break;
         }
