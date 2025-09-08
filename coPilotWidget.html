@@ -7,15 +7,19 @@
   <h3>Watsonx Orchestrate Connector</h3>
   <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 
-  <!-- Include LP Agent Workspace Widget SDK -->
-  <script src="https://lptag.liveperson.net/agent-sdk/latest/agent-workspace-widget-sdk.min.js"></script>
+  <!-- Correct LP SDK -->
+  <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
     (async () => {
+      if (!window.lpTag || !lpTag.agentSDK) {
+        console.error("Agent SDK not available. Make sure this is running inside LivePerson Agent Workspace.");
+        return;
+      }
 
-
-      const sdk = new window.AgentWorkspaceSDK();
-      await sdk.init();
+      // Initialize SDK
+      const SDK = lpTag.agentSDK;
+      SDK.init();
 
       const log = (msg) => {
         const logDiv = document.getElementById("log");
@@ -23,7 +27,7 @@
         logDiv.scrollTop = logDiv.scrollHeight;
       };
 
-      log("Agent Workspace SDK initialized ✅");
+      log("Agent SDK initialized ✅");
 
       // --- Orchestrate Configuration ---
       const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
@@ -93,21 +97,25 @@
         log(`→ Orchestrate response: ${JSON.stringify(data)}`);
       }
 
-      // --- Listen to customer messages ---
-      sdk.conversation.onMessage((data) => {
-        const { conversationId, message, participantRole } = data;
-        if (!message?.text || participantRole !== "CONSUMER") return;
-
-        log(`[Customer] ${message.text}`);
-        sendToOrchestrate(conversationId, message.text).catch(err => log("Error: " + err));
+      // --- Listen for customer messages ---
+      SDK.bind('chatTranscript.lines', function(data) {
+        const lines = data.newValue || [];
+        lines.forEach(line => {
+          if (line.source === 'visitor' && line.text) {
+            const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
+            log(`[Customer] ${line.text}`);
+            sendToOrchestrate(conversationId, line.text).catch(err => log("Error: " + err));
+          }
+        });
       });
 
-      // --- Clean up sessions when conversation closes ---
-      sdk.conversation.onConversationClosed((data) => {
-        const { conversationId } = data;
+      // --- Clean up sessions on conversation close ---
+      SDK.bind('conversation.closed', function(data) {
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
         log(`Conversation ${conversationId} closed. Cleaning up Orchestrate session.`);
         delete sessionMap[conversationId];
       });
+
     })();
   </script>
 </body>
