@@ -12,10 +12,7 @@
 
   <script>
     (async () => {
-      if (!window.AgentWorkspaceSDK) {
-        console.error("Agent Workspace SDK not available. Make sure the script loaded correctly.");
-        return;
-      }
+
 
       const sdk = new window.AgentWorkspaceSDK();
       await sdk.init();
