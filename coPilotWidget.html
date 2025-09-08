@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LP → Orchestrate Stateful Widget</title>
+  <title>LP → Orchestrate Widget</title>
 </head>
 <body>
   <h3>Watsonx Orchestrate Connector</h3>
@@ -10,105 +10,38 @@
   <script>
     (async () => {
       if (!window.lpTag?.agentSDK) {
-        console.error('Agent Workspace Widget SDK is not available.');
+        console.error("lpTag.agentSDK not found. Make sure this is running inside LivePerson Agent Workspace.");
         return;
       }
 
-      // Initialize SDK
-      window.lpTag.agentSDK.init({});
-      const sdk = window.lpTag.agentSDK;
+      // Initialize LP Agent SDK
+      lpTag.agentSDK.init({});
+      const sdk = lpTag.agentSDK;
       const log = (msg) => {
         const logDiv = document.getElementById("log");
         logDiv.textContent += msg + "\n";
         logDiv.scrollTop = logDiv.scrollHeight;
       };
 
-      log('Agent SDK initialized.');
+      log("Agent SDK initialized ✅");
 
-      const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
-      const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
-      const ORCHESTRATE_API_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
+      // Example: subscribe to chat lines
+      const onLine = (data) => {
+        try {
+          const text = data.newValue?.text;
+          const role = data.newValue?.source;
+          if (role === "visitor" && text) {
+            log(`[Customer] ${text}`);
+            // 👉 here is where you’d call Orchestrate API
+          }
+        } catch (e) {
+          log("Error parsing message: " + e);
+        }
+      };
 
-      let accessToken = null;
-      let tokenExpiry = 0;
-      const sessionMap = {};
-
-      async function getToken() {
-        const now = Date.now() / 1000;
-        if (accessToken && now < tokenExpiry - 60) return accessToken;
-
-        log("Fetching IAM token...");
-        const res = await fetch(IAM_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${API_KEY}`
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch IAM token");
-        const data = await res.json();
-        accessToken = data.access_token;
-        tokenExpiry = now + data.expires_in;
-        log("→ Got IAM token");
-        return accessToken;
-      }
-
-      async function getOrchestrateSession(conversationId) {
-        if (sessionMap[conversationId]) return sessionMap[conversationId];
-
-        const token = await getToken();
-        log(`Creating new Orchestrate session for LP conversation ${conversationId}...`);
-
-        const res = await fetch(`${ORCHESTRATE_API_BASE}/sessions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ conversationId }),
-        });
-
-        if (!res.ok) throw new Error("Failed to create session");
-        const data = await res.json();
-        sessionMap[conversationId] = data.sessionId;
-        log(`→ Orchestrate session created: ${data.sessionId}`);
-        return data.sessionId;
-      }
-
-      async function sendToOrchestrate(conversationId, text) {
-        const sessionId = await getOrchestrateSession(conversationId);
-        const token = await getToken();
-
-        const res = await fetch(`${ORCHESTRATE_API_BASE}/sessions/${sessionId}/messages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ sender: "customer", text }),
-        });
-
-        if (!res.ok) throw new Error("Failed to send message");
-        const data = await res.json();
-        log(`→ Orchestrate response: ${JSON.stringify(data)}`);
-      }
-
-      sdk.on('message', (data) => {
-        const lines = Array.isArray(data) ? data : [data];
-        lines.forEach(line => {
-          const source = line.source;
-          const text = line.text;
-          const conversationId = sdk.chatInfo?.rtSessionId || "unknown";
-          if (source !== "visitor" || !text) return;
-
-          log(`[Customer] ${text}`);
-          sendToOrchestrate(conversationId, text).catch(err => log("Error: " + err));
-        });
-      });
-
-      sdk.on('conversationEnded', (data) => {
-        const conversationId = data.rtSessionId;
-        log(`Conversation ${conversationId} ended, cleaning up session`);
-        delete sessionMap[conversationId];
+      sdk.bind("chatTranscript.lines", onLine, (err) => {
+        if (err) log("Bind error: " + err);
+        else log("Bound to chatTranscript.lines");
       });
     })();
   </script>
