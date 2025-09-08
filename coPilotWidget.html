@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>LP → Orchestrate Stateful Widget</title>
-  <script src="https://cdn.jsdelivr.net/npm/@livepersoninc/agent-workspace-widget-sdk@latest/dist/agent-workspace-widget-sdk.min.js"></script>
 </head>
 <body>
   <h3>Watsonx Orchestrate Connector</h3>
@@ -10,6 +9,7 @@
 
   <script>
     (async () => {
+      // The SDK is injected by LivePerson runtime
       const sdk = new window.AgentWorkspaceWidget.SDK({});
       const log = (msg) => {
         const logDiv = document.getElementById("log");
@@ -17,7 +17,7 @@
         logDiv.scrollTop = logDiv.scrollHeight;
       };
 
-      // IBM Cloud IAM auth
+      // IBM Cloud IAM + Orchestrate API details
       const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
       const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
       const ORCHESTRATE_API_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
@@ -28,7 +28,7 @@
 
       async function getToken() {
         const now = Date.now() / 1000;
-        if (accessToken && now < tokenExpiry - 60) return accessToken; // still valid
+        if (accessToken && now < tokenExpiry - 60) return accessToken;
 
         log("Fetching new IAM token...");
         const res = await fetch(IAM_URL, {
@@ -85,7 +85,7 @@
         log(`→ Orchestrate response: ${JSON.stringify(data)}`);
       }
 
-      // Listen for LivePerson messages (customer only)
+      // Listen for customer messages only
       sdk.conversation.onMessage((data) => {
         const { conversationId, message, participantRole } = data;
         const text = message?.text;
@@ -95,7 +95,7 @@
         sendToOrchestrate(conversationId, text).catch(err => log("Error: " + err));
       });
 
-      // Optional: cleanup on conversation close
+      // Cleanup on conversation close
       sdk.conversation.onConversationClosed((data) => {
         const { conversationId } = data;
         log(`Conversation ${conversationId} closed, cleaning up session`);
