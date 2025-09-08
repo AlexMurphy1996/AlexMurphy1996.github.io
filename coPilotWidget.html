@@ -9,15 +9,22 @@
 
   <script>
     (async () => {
-      // The SDK is injected by LivePerson runtime
-      const sdk = new window.AgentWorkspaceWidget.SDK({});
+      if (!window.lpTag?.agentSDK) {
+        console.error('Agent Workspace Widget SDK is not available.');
+        return;
+      }
+
+      // Initialize SDK
+      window.lpTag.agentSDK.init({});
+      const sdk = window.lpTag.agentSDK;
       const log = (msg) => {
         const logDiv = document.getElementById("log");
         logDiv.textContent += msg + "\n";
         logDiv.scrollTop = logDiv.scrollHeight;
       };
 
-      // IBM Cloud IAM + Orchestrate API details
+      log('Agent SDK initialized.');
+
       const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
       const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
       const ORCHESTRATE_API_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
@@ -30,7 +37,7 @@
         const now = Date.now() / 1000;
         if (accessToken && now < tokenExpiry - 60) return accessToken;
 
-        log("Fetching new IAM token...");
+        log("Fetching IAM token...");
         const res = await fetch(IAM_URL, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -85,20 +92,22 @@
         log(`→ Orchestrate response: ${JSON.stringify(data)}`);
       }
 
-      // Listen for customer messages only
-      sdk.conversation.onMessage((data) => {
-        const { conversationId, message, participantRole } = data;
-        const text = message?.text;
-        if (!text || participantRole !== "CONSUMER") return;
+      sdk.on('message', (data) => {
+        const lines = Array.isArray(data) ? data : [data];
+        lines.forEach(line => {
+          const source = line.source;
+          const text = line.text;
+          const conversationId = sdk.chatInfo?.rtSessionId || "unknown";
+          if (source !== "visitor" || !text) return;
 
-        log(`[Customer] ${text}`);
-        sendToOrchestrate(conversationId, text).catch(err => log("Error: " + err));
+          log(`[Customer] ${text}`);
+          sendToOrchestrate(conversationId, text).catch(err => log("Error: " + err));
+        });
       });
 
-      // Cleanup on conversation close
-      sdk.conversation.onConversationClosed((data) => {
-        const { conversationId } = data;
-        log(`Conversation ${conversationId} closed, cleaning up session`);
+      sdk.on('conversationEnded', (data) => {
+        const conversationId = data.rtSessionId;
+        log(`Conversation ${conversationId} ended, cleaning up session`);
         delete sessionMap[conversationId];
       });
     })();
