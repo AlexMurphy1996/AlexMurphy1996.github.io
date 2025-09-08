@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LP → Orchestrate Widget</title>
+  <title>Agent CoPilot Widget</title>
 </head>
 <body>
   <h3>Watsonx Orchestrate Connector</h3>
@@ -9,35 +9,105 @@
 
   <script>
     (async () => {
+      // Ensure SDK is available
+      if (!window.AgentWorkspaceSDK) {
+        console.error("Agent Workspace SDK not available. Load this inside Agent Workspace.");
+        return;
+      }
 
-      // Initialize LP Agent SDK
-      lpTag.agentSDK.init({});
-      const sdk = lpTag.agentSDK;
+      const sdk = new window.AgentWorkspaceSDK();
+      await sdk.init();
+
       const log = (msg) => {
         const logDiv = document.getElementById("log");
         logDiv.textContent += msg + "\n";
         logDiv.scrollTop = logDiv.scrollHeight;
       };
 
-      log("Agent SDK initialized ✅");
+      log("Agent Workspace SDK initialized ✅");
 
-      // Example: subscribe to chat lines
-      const onLine = (data) => {
-        try {
-          const text = data.newValue?.text;
-          const role = data.newValue?.source;
-          if (role === "visitor" && text) {
-            log(`[Customer] ${text}`);
-            // 👉 here is where you’d call Orchestrate API
-          }
-        } catch (e) {
-          log("Error parsing message: " + e);
-        }
-      };
+      // Orchestrate config
+      const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
+      const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
+      const ORCHESTRATE_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
 
-      sdk.bind("chatTranscript.lines", onLine, (err) => {
-        if (err) log("Bind error: " + err);
-        else log("Bound to chatTranscript.lines");
+      let accessToken = null;
+      let tokenExpiry = 0;
+      const sessionMap = {};
+
+      async function getToken() {
+        const now = Date.now() / 1000;
+        if (accessToken && now < tokenExpiry - 60) return accessToken;
+
+        log("Fetching new IAM token...");
+        const res = await fetch(IAM_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${API_KEY}`
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch IAM token");
+        const data = await res.json();
+        accessToken = data.access_token;
+        tokenExpiry = now + data.expires_in;
+        log("→ Got IAM token");
+        return accessToken;
+      }
+
+      async function getOrchestrateSession(conversationId) {
+        if (sessionMap[conversationId]) return sessionMap[conversationId];
+
+        const token = await getToken();
+        log(`Creating Orchestrate session for conversation ${conversationId}...`);
+
+        const res = await fetch(`${ORCHESTRATE_BASE}/sessions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ conversationId }),
+        });
+
+        if (!res.ok) throw new Error("Failed to create Orchestrate session");
+        const data = await res.json();
+        sessionMap[conversationId] = data.sessionId;
+        log(`→ Session created: ${data.sessionId}`);
+        return data.sessionId;
+      }
+
+      async function sendToOrchestrate(conversationId, text) {
+        const sessionId = await getOrchestrateSession(conversationId);
+        const token = await getToken();
+
+        const res = await fetch(`${ORCHESTRATE_BASE}/sessions/${sessionId}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ sender: "customer", text }),
+        });
+
+        if (!res.ok) throw new Error("Failed to send message");
+        const data = await res.json();
+        log(`→ Orchestrate response: ${JSON.stringify(data)}`);
+      }
+
+      // Subscribe to conversation messages
+      sdk.conversation.onMessage((data) => {
+        const { conversationId, message, participantRole } = data;
+        if (!message?.text || participantRole !== "CONSUMER") return;
+
+        log(`[Customer] ${message.text}`);
+        sendToOrchestrate(conversationId, message.text).catch(err => log("Error: " + err));
+      });
+
+      // Clean up session on conversation close
+      sdk.conversation.onConversationClosed((data) => {
+        const { conversationId } = data;
+        log(`Conversation ${conversationId} closed. Cleaning up Orchestrate session.`);
+        delete sessionMap[conversationId];
       });
     })();
   </script>
