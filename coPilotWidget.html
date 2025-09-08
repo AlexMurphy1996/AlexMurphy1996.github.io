@@ -7,8 +7,15 @@
   <h3>Watsonx Orchestrate Connector</h3>
   <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 
+  <!-- Include LP Agent Workspace Widget SDK -->
+  <script src="https://lptag.liveperson.net/agent-sdk/latest/agent-workspace-widget-sdk.min.js"></script>
+
   <script>
     (async () => {
+      if (!window.AgentWorkspaceSDK) {
+        console.error("Agent Workspace SDK not available. Make sure the script loaded correctly.");
+        return;
+      }
 
       const sdk = new window.AgentWorkspaceSDK();
       await sdk.init();
@@ -21,7 +28,7 @@
 
       log("Agent Workspace SDK initialized ✅");
 
-      // Orchestrate config
+      // --- Orchestrate Configuration ---
       const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
       const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
       const ORCHESTRATE_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
@@ -89,7 +96,7 @@
         log(`→ Orchestrate response: ${JSON.stringify(data)}`);
       }
 
-      // Subscribe to conversation messages
+      // --- Listen to customer messages ---
       sdk.conversation.onMessage((data) => {
         const { conversationId, message, participantRole } = data;
         if (!message?.text || participantRole !== "CONSUMER") return;
@@ -98,7 +105,7 @@
         sendToOrchestrate(conversationId, message.text).catch(err => log("Error: " + err));
       });
 
-      // Clean up session on conversation close
+      // --- Clean up sessions when conversation closes ---
       sdk.conversation.onConversationClosed((data) => {
         const { conversationId } = data;
         log(`Conversation ${conversationId} closed. Cleaning up Orchestrate session.`);
