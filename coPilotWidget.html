@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LP → Orchestrate Stateful Widget</title>
+  <script src="https://cdn.jsdelivr.net/npm/@livepersoninc/agent-workspace-widget-sdk@latest/dist/agent-workspace-widget-sdk.min.js"></script>
+</head>
+<body>
+  <h3>Watsonx Orchestrate Connector</h3>
+  <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
+
+  <script>
+    (async () => {
+      const sdk = new window.AgentWorkspaceWidget.SDK({});
+      const log = (msg) => {
+        const logDiv = document.getElementById("log");
+        logDiv.textContent += msg + "\n";
+        logDiv.scrollTop = logDiv.scrollHeight;
+      };
+
+      // IBM Cloud IAM auth
+      const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
+      const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
+      const ORCHESTRATE_API_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
+
+      let accessToken = null;
+      let tokenExpiry = 0;
+      const sessionMap = {};
+
+      async function getToken() {
+        const now = Date.now() / 1000;
+        if (accessToken && now < tokenExpiry - 60) return accessToken; // still valid
+
+        log("Fetching new IAM token...");
+        const res = await fetch(IAM_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${API_KEY}`
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch IAM token");
+        const data = await res.json();
+        accessToken = data.access_token;
+        tokenExpiry = now + data.expires_in;
+        log("→ Got IAM token");
+        return accessToken;
+      }
+
+      async function getOrchestrateSession(conversationId) {
+        if (sessionMap[conversationId]) return sessionMap[conversationId];
+
+        const token = await getToken();
+        log(`Creating new Orchestrate session for LP conversation ${conversationId}...`);
+
+        const res = await fetch(`${ORCHESTRATE_API_BASE}/sessions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ conversationId }),
+        });
+
+        if (!res.ok) throw new Error("Failed to create session");
+        const data = await res.json();
+        sessionMap[conversationId] = data.sessionId;
+        log(`→ Orchestrate session created: ${data.sessionId}`);
+        return data.sessionId;
+      }
+
+      async function sendToOrchestrate(conversationId, text) {
+        const sessionId = await getOrchestrateSession(conversationId);
+        const token = await getToken();
+
+        const res = await fetch(`${ORCHESTRATE_API_BASE}/sessions/${sessionId}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ sender: "customer", text }),
+        });
+
+        if (!res.ok) throw new Error("Failed to send message");
+        const data = await res.json();
+        log(`→ Orchestrate response: ${JSON.stringify(data)}`);
+      }
+
+      // Listen for LivePerson messages (customer only)
+      sdk.conversation.onMessage((data) => {
+        const { conversationId, message, participantRole } = data;
+        const text = message?.text;
+        if (!text || participantRole !== "CONSUMER") return;
+
+        log(`[Customer] ${text}`);
+        sendToOrchestrate(conversationId, text).catch(err => log("Error: " + err));
+      });
+
+      // Optional: cleanup on conversation close
+      sdk.conversation.onConversationClosed((data) => {
+        const { conversationId } = data;
+        log(`Conversation ${conversationId} closed, cleaning up session`);
+        delete sessionMap[conversationId];
+      });
+    })();
+  </script>
+</body>
+</html>
