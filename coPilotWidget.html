@@ -9,10 +9,6 @@
 
   <script>
     (async () => {
-      if (!window.lpTag?.agentSDK) {
-        console.error("lpTag.agentSDK not found. Make sure this is running inside LivePerson Agent Workspace.");
-        return;
-      }
 
       // Initialize LP Agent SDK
       lpTag.agentSDK.init({});
