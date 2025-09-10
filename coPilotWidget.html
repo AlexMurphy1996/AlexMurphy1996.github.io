@@ -29,72 +29,27 @@
 
       log("Agent SDK initialized ✅");
 
-      // --- Orchestrate Configuration ---
-      const IAM_URL = "https://iam.cloud.ibm.com/identity/token";
-      const API_KEY = "jMOWSXHPouV4qbyeQXRet4Nqos6hiTGe8jz4KVs-vmpQ";
-      const ORCHESTRATE_BASE = "https://api.eu-gb.watson-orchestrate.cloud.ibm.com/instances/e10b6ef7-7a7d-49da-a8d3-6dee36cecfc8/v1";
-
-      let accessToken = null;
-      let tokenExpiry = 0;
-      const sessionMap = {};
-
-      async function getToken() {
-        const now = Date.now() / 1000;
-        if (accessToken && now < tokenExpiry - 60) return accessToken;
-
-        log("Fetching new IAM token...");
-        const res = await fetch(IAM_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${API_KEY}`
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch IAM token");
-        const data = await res.json();
-        accessToken = data.access_token;
-        tokenExpiry = now + data.expires_in;
-        log("→ Got IAM token");
-        return accessToken;
-      }
-
-      async function getOrchestrateSession(conversationId) {
-        if (sessionMap[conversationId]) return sessionMap[conversationId];
-
-        const token = await getToken();
-        log(`Creating Orchestrate session for conversation ${conversationId}...`);
-
-        const res = await fetch(`${ORCHESTRATE_BASE}/sessions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ conversationId }),
-        });
-
-        if (!res.ok) throw new Error("Failed to create Orchestrate session");
-        const data = await res.json();
-        sessionMap[conversationId] = data.sessionId;
-        log(`→ Session created: ${data.sessionId}`);
-        return data.sessionId;
-      }
+      // --- Proxy configuration ---
+      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent"; 
+      // e.g. https://localhost:3000/orchestrate if testing on Mac with tunneling (ngrok/Cloudflare)
 
       async function sendToOrchestrate(conversationId, text) {
-        const sessionId = await getOrchestrateSession(conversationId);
-        const token = await getToken();
+        try {
+          const res = await fetch(PROXY_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ conversationId, text })
+          });
 
-        const res = await fetch(`${ORCHESTRATE_BASE}/sessions/${sessionId}/messages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ sender: "customer", text }),
-        });
+          if (!res.ok) {
+            throw new Error("Proxy request failed");
+          }
 
-        if (!res.ok) throw new Error("Failed to send message");
-        const data = await res.json();
-        log(`→ Orchestrate response: ${JSON.stringify(data)}`);
+          const data = await res.json();
+          log(`→ Orchestrate response: ${JSON.stringify(data)}`);
+        } catch (err) {
+          log("Error sending to Orchestrate proxy: " + err.message);
+        }
       }
 
       // --- Listen for customer messages ---
@@ -104,7 +59,7 @@
           if (line.source === 'visitor' && line.text) {
             const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
             log(`[Customer] ${line.text}`);
-            sendToOrchestrate(conversationId, line.text).catch(err => log("Error: " + err));
+            sendToOrchestrate(conversationId, line.text);
           }
         });
       });
@@ -112,8 +67,7 @@
       // --- Clean up sessions on conversation close ---
       SDK.bind('conversation.closed', function(data) {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. Cleaning up Orchestrate session.`);
-        delete sessionMap[conversationId];
+        log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
       });
 
     })();
