@@ -38,7 +38,7 @@
           const res = await fetch(PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ conversationId, text })
+            body: {"message": text}
           });
 
           if (!res.ok) {
