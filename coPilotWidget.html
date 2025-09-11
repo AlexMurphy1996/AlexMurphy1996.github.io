@@ -28,7 +28,7 @@
 
       log("Agent SDK initialized ✅");
 
-      // Proxy configuration
+      // Proxy URL
       const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
       // Persistent map of last sent lineSeq per conversation
@@ -57,10 +57,8 @@
         }
       }
 
-      // Process lines: only send lines not yet sent
       function processLines(conversationId, lines) {
         const lastSeenSeq = lastSeenSeqMap[conversationId] || 0;
-
         lines.forEach(line => {
           if (line.source === 'visitor' && line.text && line.lineSeq > lastSeenSeq) {
             log(`[Customer] ${line.text}`);
@@ -68,29 +66,21 @@
             lastSeenSeqMap[conversationId] = line.lineSeq;
           }
         });
-
         saveSeqMap();
       }
 
-      // Main: conversation opened
-      SDK.bind('conversation.info', (data) => {
-        if (data.newValue && data.newValue.state === "OPEN") {
-          const conversationId = data.newValue.rtSessionId || 'unknown';
-          log(`Conversation ${conversationId} opened.`);
+      // Get conversationId once after SDK initialized
+      const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
-          // Bind to all transcript lines
-          // SDK will fire once with existing lines, then incrementally
-          SDK.bind('chatTranscript.lines', (lineData) => {
-            const lines = lineData.newValue || [];
-            processLines(conversationId, lines);
-          });
-        }
+      // Bind directly to chatTranscript.lines to capture all new messages
+      SDK.bind('chatTranscript.lines', (lineData) => {
+        const lines = lineData.newValue || [];
+        processLines(conversationId, lines);
       });
 
-      // Clean up on conversation close
-      SDK.bind('conversation.closed', (data) => {
-        const conversationId = data?.newValue?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. Cleaning state.`);
+      // Cleanup on conversation close
+      SDK.bind('conversation.closed', () => {
+        log(`Conversation ${conversationId} closed. Clearing state.`);
         delete lastSeenSeqMap[conversationId];
         saveSeqMap();
       });
