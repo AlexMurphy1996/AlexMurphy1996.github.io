@@ -37,6 +37,28 @@
       overflow-y: auto;
     }
 
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      padding: 8px 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      border-radius: 0;
+    }
+
+    #sendBtn {
+      padding: 8px 12px;
+      border: none;
+      background-color: #0072C6;
+      color: white;
+      cursor: pointer;
+    }
+
     .message {
       margin: 5px 0;
       padding: 8px 12px;
@@ -90,6 +112,10 @@
   <div id="chatContainer">
     <div id="chatHeader">Watsonx Orchestrate Connector</div>
     <div id="chatLog"></div>
+    <div id="chatInputContainer">
+      <input id="chatInput" type="text" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
   </div>
 
   <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
@@ -105,6 +131,8 @@
       SDK.init();
 
       const chatLog = document.getElementById("chatLog");
+      const input = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("sendBtn");
 
       const logMessage = (text, type) => {
         const msgDiv = document.createElement("div");
@@ -118,14 +146,21 @@
           msgDiv.appendChild(ts);
         }
 
-        // Add button to push Orchestrate messages to LP agent input
+        // Add button to push Orchestrate messages to LP customer conversation
         if (type === "orchestrate") {
           const copyBtn = document.createElement("button");
           copyBtn.className = "copyBtn";
-          copyBtn.textContent = "Send to LP input";
+          copyBtn.textContent = "Send to Customer";
           copyBtn.addEventListener("click", () => {
-            SDK.setAgentInput(text);
-            SDK.focusAgentInput();
+            const conversationId = SDK.chatInfo?.rtSessionId;
+            if (conversationId) {
+              SDK.writeChatLine({
+                conversationId: conversationId,
+                text: text
+              });
+            } else {
+              alert("No active conversation!");
+            }
           });
           msgDiv.appendChild(copyBtn);
         }
@@ -183,6 +218,20 @@
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
         logMessage(`Conversation ${conversationId} closed.`, "system");
         delete lastSeenMap[conversationId];
+      });
+
+      // --- Widget input send button ---
+      sendBtn.addEventListener('click', () => {
+        const text = input.value.trim();
+        if (!text) return;
+        const conversationId = SDK.chatInfo?.rtSessionId || 'manual';
+        logMessage(text, "customer");
+        sendToOrchestrate(conversationId, text);
+        input.value = '';
+      });
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendBtn.click();
       });
 
     })();
