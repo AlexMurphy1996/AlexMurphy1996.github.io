@@ -46,9 +46,7 @@
             body: JSON.stringify({ message: text, conversationId })
           });
 
-          if (!res.ok) {
-            throw new Error("Proxy request failed");
-          }
+          if (!res.ok) throw new Error("Proxy request failed");
 
           const data = await res.json();
           log(`→ Orchestrate response: ${JSON.stringify(data)}`);
@@ -59,6 +57,7 @@
 
       function processLines(conversationId, lines) {
         const lastSeenSeq = lastSeenSeqMap[conversationId] || 0;
+
         lines.forEach(line => {
           if (line.source === 'visitor' && line.text && line.lineSeq > lastSeenSeq) {
             log(`[Customer] ${line.text}`);
@@ -66,20 +65,21 @@
             lastSeenSeqMap[conversationId] = line.lineSeq;
           }
         });
+
         saveSeqMap();
       }
 
-      // Get conversationId once after SDK initialized
-      const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-
-      // Bind directly to chatTranscript.lines to capture all new messages
+      // Bind to chatTranscript.lines immediately
       SDK.bind('chatTranscript.lines', (lineData) => {
+        // Only read conversationId here, when SDK.chatInfo is guaranteed to exist
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
         const lines = lineData.newValue || [];
         processLines(conversationId, lines);
       });
 
-      // Cleanup on conversation close
+      // Clean up on conversation close
       SDK.bind('conversation.closed', () => {
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
         log(`Conversation ${conversationId} closed. Clearing state.`);
         delete lastSeenSeqMap[conversationId];
         saveSeqMap();
