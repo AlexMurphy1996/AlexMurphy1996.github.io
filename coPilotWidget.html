@@ -59,10 +59,8 @@
         const conversationId = SDK.chatInfo?.rtSessionId;
         const copyBtn = document.createElement("button");
         copyBtn.className = "copyBtn";
-        copyBtn.textContent = conversationId ? "Send to Customer" : "No active conversation";
-        copyBtn.disabled = !conversationId;
+        copyBtn.textContent = "Send to Customer"
         copyBtn.addEventListener("click", () => {
-          if (!conversationId) return;
           SDK.command('Write ChatLine', { text, conversationId });
         });
         msgDiv.appendChild(copyBtn);
