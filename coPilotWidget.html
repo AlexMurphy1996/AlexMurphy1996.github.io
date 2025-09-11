@@ -23,10 +23,40 @@
       box-sizing: border-box;
     }
 
+    #chatHeader {
+      background-color: #0072C6;
+      color: white;
+      padding: 8px 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+
     #chatLog {
       flex: 1;
       padding: 10px;
       overflow-y: auto;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      padding: 8px 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      border-radius: 0;
+    }
+
+    #sendBtn {
+      padding: 8px 12px;
+      border: none;
+      background-color: #0072C6;
+      color: white;
+      cursor: pointer;
     }
 
     .message {
@@ -36,6 +66,7 @@
       max-width: 80%;
       word-wrap: break-word;
       box-sizing: border-box;
+      position: relative;
     }
 
     .customer {
@@ -47,11 +78,32 @@
       background-color: #e2ffe2;
       align-self: flex-end;
     }
+
+    .system {
+      background-color: #f0f0f0;
+      color: #555;
+      text-align: center;
+      font-size: 0.85em;
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .timestamp {
+      display: block;
+      font-size: 0.7em;
+      color: #666;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
   <div id="chatContainer">
+    <div id="chatHeader">Watsonx Orchestrate Connector</div>
     <div id="chatLog"></div>
+    <div id="chatInputContainer">
+      <input id="chatInput" type="text" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
   </div>
 
   <!-- LivePerson Agent SDK -->
@@ -68,16 +120,26 @@
       SDK.init();
 
       const chatLog = document.getElementById("chatLog");
+      const input = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("sendBtn");
 
       const logMessage = (text, type) => {
         const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${type}`;
+        msgDiv.className = type;
         msgDiv.textContent = text;
+
+        if (type !== "system") {
+          const ts = document.createElement("span");
+          ts.className = "timestamp";
+          ts.textContent = new Date().toLocaleTimeString();
+          msgDiv.appendChild(ts);
+        }
+
         chatLog.appendChild(msgDiv);
-        chatLog.scrollTop = chatLog.scrollHeight;
+        chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
       };
 
-      logMessage("Agent SDK initialized ✅", "orchestrate");
+      logMessage("Agent SDK initialized ✅", "system");
 
       const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
@@ -94,7 +156,7 @@
           const data = await res.json();
           logMessage(JSON.stringify(data), "orchestrate");
         } catch (err) {
-          logMessage("Error sending to Orchestrate: " + err.message, "orchestrate");
+          logMessage("Error sending to Orchestrate: " + err.message, "system");
         }
       }
 
@@ -104,11 +166,10 @@
         const lines = data.newValue || [];
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
-        // On first bind, skip old lines
         if (!(conversationId in lastSeenMap)) {
           const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
           lastSeenMap[conversationId] = maxLineId;
-          return; // skip existing messages
+          return;
         }
 
         lines.forEach(line => {
@@ -125,8 +186,26 @@
 
       SDK.bind('conversation.closed', function() {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        logMessage(`Conversation ${conversationId} closed.`, "orchestrate");
+        logMessage(`Conversation ${conversationId} closed.`, "system");
         delete lastSeenMap[conversationId];
+      });
+
+      // --- Send button handler ---
+      sendBtn.addEventListener('click', () => {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const conversationId = SDK.chatInfo?.rtSessionId || 'manual';
+        logMessage(text, "customer");
+        sendToOrchestrate(conversationId, text);
+        input.value = '';
+      });
+
+      // Enter key also sends
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendBtn.click();
+        }
       });
 
     })();
