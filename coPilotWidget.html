@@ -65,8 +65,8 @@
         copyBtn.textContent = "Send to Customer";
         copyBtn.addEventListener("click", () => {
           const conversationId = SDK.chatInfo?.rtSessionId;
-          if (!conversationId) return alert("No active conversation!");
-          SDK.writeChatLine({ conversationId, text });
+          //if (!conversationId) return alert("No active conversation!");
+          SDK.writeChatLine({ text });
         });
         msgDiv.appendChild(copyBtn);
       }
