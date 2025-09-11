@@ -47,8 +47,8 @@
         }
       }
 
-      // Send new visitor messages
-      SDK.bind('chatTranscript.lines', function(data) {
+      // Only send new visitor messages that arrive after binding
+      SDK.bind('chatTranscript.lines', (data) => {
         const lines = data.newValue || [];
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
@@ -60,8 +60,7 @@
         });
       });
 
-      // Optional: log when conversation closes
-      SDK.bind('conversation.closed', function() {
+      SDK.bind('conversation.closed', () => {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
         log(`Conversation ${conversationId} closed.`);
       });
