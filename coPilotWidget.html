@@ -93,23 +93,19 @@
         });
         if (!res.ok) throw new Error("Proxy request failed");
         const data = await res.json();
-
-        // Extract readable text
-        let suggestions = [];
-        if (Array.isArray(data.suggestions)) {
-          suggestions = data.suggestions.map(s => s.text || JSON.stringify(s));
-        } else if (data.reply || data.response || data.message) {
-          suggestions = [data.reply || data.response || data.message];
+    
+        // Show only the first answer text from Orchestrate
+        if (data.answers && Array.isArray(data.answers) && data.answers.length > 0) {
+          logMessage(data.answers[0], "orchestrate", data);
         } else {
-          suggestions = [JSON.stringify(data)];
+          logMessage("No answer returned from Orchestrate.", "system");
         }
-
-        suggestions.forEach(suggestion => logMessage(suggestion, "orchestrate", data));
-
+    
       } catch (err) {
         logMessage("Error sending to Orchestrate: " + err.message, "system");
       }
     };
+
 
     SDK.bind('chatTranscript.lines', (data) => {
       const lines = data.newValue || [];
