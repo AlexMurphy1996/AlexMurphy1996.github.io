@@ -7,7 +7,7 @@
   <h3>Watsonx Orchestrate Connector</h3>
   <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 
-  <!-- Correct LP SDK -->
+  <!-- LivePerson Agent SDK -->
   <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
@@ -17,7 +17,6 @@
         return;
       }
 
-      // Initialize SDK
       const SDK = lpTag.agentSDK;
       SDK.init();
 
@@ -68,27 +67,19 @@
               log(`[Customer] ${line.text}`);
               sendToOrchestrate(conversationId, line.text);
               lastSeenSeqMap[conversationId] = line.lineSeq;
-              saveSeqMap(); // persist updated map
+              saveSeqMap();
             }
           }
         });
       }
 
-      // --- Main flow: when a conversation opens ---
+      // --- Main flow: conversation open ---
       SDK.bind('conversation.info', (data) => {
         if (data.newValue && data.newValue.state === "OPEN") {
           const conversationId = data.newValue.rtSessionId || 'unknown';
           log(`Conversation ${conversationId} opened.`);
 
-          // 1. Fetch full transcript once
-         SDK.get('chatTranscript.lines', (res) => {
-            const lines = res?.lines || [];
-            log(`Fetched ${lines.length} transcript lines.`);
-            processLines(conversationId, lines);
-          });
-
-
-          // 2. Listen only for new lines after that
+          // Bind to chatTranscript.lines — this will fire once with **all existing messages**, then incrementally
           SDK.bind('chatTranscript.lines', (lineData) => {
             const lines = lineData.newValue || [];
             processLines(conversationId, lines);
@@ -96,10 +87,10 @@
         }
       });
 
-      // --- Clean up sessions on conversation close ---
+      // --- Clean up session on conversation close ---
       SDK.bind('conversation.closed', (data) => {
         const conversationId = data?.newValue?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
+        log(`Conversation ${conversationId} closed. State cleared.`);
         delete lastSeenSeqMap[conversationId];
         saveSeqMap();
       });
