@@ -133,6 +133,7 @@
       const chatLog = document.getElementById("chatLog");
       const input = document.getElementById("chatInput");
       const sendBtn = document.getElementById("sendBtn");
+      const conversationId = SDK.chatInfo?.rtSessionId;
 
       const logMessage = (text, type) => {
         const msgDiv = document.createElement("div");
@@ -151,8 +152,7 @@
           const copyBtn = document.createElement("button");
           copyBtn.className = "copyBtn";
           copyBtn.textContent = "Send to Customer";
-          copyBtn.addEventListener("click", () => {
-            const conversationId = SDK.chatInfo?.rtSessionId;
+          copyBtn.addEventListener("click", () => {       
             if (conversationId) {
               SDK.writeChatLine({
                 conversationId: conversationId,
