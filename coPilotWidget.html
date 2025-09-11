@@ -7,7 +7,7 @@
   <h3>Watsonx Orchestrate Connector</h3>
   <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 
-  <!-- Correct LP SDK -->
+  <!-- LivePerson Agent SDK -->
   <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
@@ -17,7 +17,6 @@
         return;
       }
 
-      // Initialize SDK
       const SDK = lpTag.agentSDK;
       SDK.init();
 
@@ -30,20 +29,17 @@
       log("Agent SDK initialized ✅");
 
       // --- Proxy configuration ---
-      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent"; 
-      // e.g. https://localhost:3000/orchestrate if testing on Mac with tunneling (ngrok/Cloudflare)
+      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
       async function sendToOrchestrate(conversationId, text) {
         try {
           const res = await fetch(PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({message: text})
+            body: JSON.stringify({ message: text, conversationId })
           });
 
-          if (!res.ok) {
-            throw new Error("Proxy request failed");
-          }
+          if (!res.ok) throw new Error("Proxy request failed");
 
           const data = await res.json();
           log(`→ Orchestrate response: ${JSON.stringify(data)}`);
@@ -52,7 +48,10 @@
         }
       }
 
-      // --- Listen for customer messages incrementally ---
+      // --- Track last seen lines per conversation ---
+      const lastSeenMap = {};
+
+      // --- Listen for new visitor messages ---
       SDK.bind('chatTranscript.lines', function(data) {
         const lines = data.newValue || [];
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
@@ -71,10 +70,11 @@
         });
       });
 
-      // --- Clean up sessions on conversation close ---
-      SDK.bind('conversation.closed', function(data) {
+      // --- Clean up when conversation closes ---
+      SDK.bind('conversation.closed', function() {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
+        log(`Conversation ${conversationId} closed.`);
+        delete lastSeenMap[conversationId];
       });
 
     })();
