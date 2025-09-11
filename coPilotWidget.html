@@ -32,6 +32,13 @@
       // --- Proxy configuration ---
       const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
+      // --- Persistent lastSeenSeqMap ---
+      let lastSeenSeqMap = JSON.parse(localStorage.getItem("lastSeenSeqMap") || "{}");
+
+      const saveSeqMap = () => {
+        localStorage.setItem("lastSeenSeqMap", JSON.stringify(lastSeenSeqMap));
+      };
+
       async function sendToOrchestrate(conversationId, text) {
         try {
           const res = await fetch(PROXY_URL, {
@@ -51,12 +58,18 @@
         }
       }
 
-      // --- Helper: process transcript lines ---
+      // --- Helper: process lines incrementally ---
       function processLines(conversationId, lines) {
+        const lastSeenSeq = lastSeenSeqMap[conversationId] || 0;
+
         lines.forEach(line => {
           if (line.source === 'visitor' && line.text) {
-            log(`[Customer] ${line.text}`);
-            sendToOrchestrate(conversationId, line.text);
+            if (line.lineSeq > lastSeenSeq) {
+              log(`[Customer] ${line.text}`);
+              sendToOrchestrate(conversationId, line.text);
+              lastSeenSeqMap[conversationId] = line.lineSeq;
+              saveSeqMap(); // persist updated map
+            }
           }
         });
       }
@@ -86,6 +99,8 @@
       SDK.bind('conversation.closed', (data) => {
         const conversationId = data?.newValue?.rtSessionId || 'unknown';
         log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
+        delete lastSeenSeqMap[conversationId];
+        saveSeqMap();
       });
 
     })();
