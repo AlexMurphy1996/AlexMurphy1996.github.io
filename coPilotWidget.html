@@ -28,7 +28,6 @@
 
       log("Agent SDK initialized ✅");
 
-      // --- Proxy configuration ---
       const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
       async function sendToOrchestrate(conversationId, text) {
@@ -56,16 +55,20 @@
         const lines = data.newValue || [];
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
-        lines.forEach(line => {
-          if (line.source === 'visitor' && line.text) {
-            const lineId = line.lineId || Date.now(); // fallback if no lineId
-            const lastSeen = lastSeenMap[conversationId] || 0;
+        if (!(conversationId in lastSeenMap)) {
+          // First bind: skip all existing lines, record max lineId
+          const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
+          lastSeenMap[conversationId] = maxLineId;
+          return; // skip old messages
+        }
 
-            if (lineId > lastSeen) {
-              log(`[Customer] ${line.text}`);
-              sendToOrchestrate(conversationId, line.text);
-              lastSeenMap[conversationId] = lineId;
-            }
+        // Send only lines with lineId > lastSeen
+        lines.forEach(line => {
+          const lastSeen = lastSeenMap[conversationId];
+          if (line.source === 'visitor' && line.text && (line.lineId || 0) > lastSeen) {
+            log(`[Customer] ${line.text}`);
+            sendToOrchestrate(conversationId, line.text);
+            lastSeenMap[conversationId] = line.lineId || lastSeen;
           }
         });
       });
