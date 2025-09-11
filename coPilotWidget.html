@@ -16,6 +16,35 @@
     .system { background-color:#f0f0f0; color:#555; text-align:center; font-size:0.85em; max-width:100%; border-radius:10px; }
     .timestamp { display:block; font-size:0.7em; color:#666; margin-top:2px; }
     .copyBtn { margin-left:8px; font-size:0.7em; padding:2px 6px; cursor:pointer; background-color:#0072C6; color:white; border:none; border-radius:3px; }
+
+    /* Typing indicator with fade and animated dots */
+    .typing {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      background-color: #f0f0f0;
+      color: #555;
+      text-align: center;
+      font-size: 0.85em;
+      max-width: 100%;
+      border-radius: 10px;
+      margin: 5px 0;
+      padding: 8px 12px;
+    }
+    .typing.visible {
+      opacity: 1;
+    }
+    .typing span.dot {
+      display: inline-block;
+      animation: blink 1s infinite;
+      margin-left: 2px;
+    }
+    .typing span.dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing span.dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 20% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -102,12 +131,19 @@
 
     // --- Send Message to Orchestrate ---
     const sendToOrchestrate = async (conversationId, text) => {
-      // Typing indicator
+      // Typing indicator with animated dots
       const typingIndicator = document.createElement("div");
-      typingIndicator.className = "system";
-      typingIndicator.textContent = "Orchestrate is typing...";
+      typingIndicator.className = "typing";
+      typingIndicator.textContent = "Orchestrate is typing";
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement("span");
+        dot.className = "dot";
+        dot.textContent = ".";
+        typingIndicator.appendChild(dot);
+      }
       chatLog.appendChild(typingIndicator);
-      chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
+      requestAnimationFrame(() => typingIndicator.classList.add("visible"));
+      if (scrollIfNeeded()) chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
 
       try {
         const res = await fetch(PROXY_URL, {
@@ -118,7 +154,9 @@
         if (!res.ok) throw new Error("Proxy request failed");
         const data = await res.json();
 
-        typingIndicator.remove();
+        // Fade out typing indicator
+        typingIndicator.classList.remove("visible");
+        setTimeout(() => typingIndicator.remove(), 300);
 
         // Show multiple answers
         if (data.answers && Array.isArray(data.answers) && data.answers.length > 0) {
@@ -128,7 +166,8 @@
         }
 
       } catch (err) {
-        typingIndicator.remove();
+        typingIndicator.classList.remove("visible");
+        setTimeout(() => typingIndicator.remove(), 300);
         logMessage("Error sending to Orchestrate: " + err.message, "system");
       }
     };
