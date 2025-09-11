@@ -32,122 +32,149 @@
   <script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
-  (async () => {
-
-    const SDK = lpTag.agentSDK;
-    SDK.init();
-
-    const chatLog = document.getElementById("chatLog");
-    const input = document.getElementById("chatInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
-    const lastSeenMap = {};
-
-    const logMessage = (text, type, rawPayload = null) => {
-      const msgDiv = document.createElement("div");
-      msgDiv.className = type;
-      msgDiv.textContent = text;
-
-      if (type !== "system") {
-        const ts = document.createElement("span");
-        ts.className = "timestamp";
-        ts.textContent = new Date().toLocaleTimeString();
-        msgDiv.appendChild(ts);
-      }
-
-      if (type === "orchestrate") {
-        const conversationId = SDK.chatInfo?.rtSessionId;
-        const copyBtn = document.createElement("button");
-        copyBtn.className = "copyBtn";
-        copyBtn.textContent = "Send to Customer"
-        copyBtn.addEventListener("click", () => {
-          SDK.command('Write ChatLine', { text, conversationId });
-        });
-        msgDiv.appendChild(copyBtn);
-
-        // Optional debug
-        if (rawPayload) {
-          const raw = document.createElement("details");
-          const summary = document.createElement("summary");
-          summary.textContent = "View Raw Response";
-          const pre = document.createElement("pre");
-          pre.textContent = JSON.stringify(rawPayload, null, 2);
-          raw.appendChild(summary);
-          raw.appendChild(pre);
-          msgDiv.appendChild(raw);
-        }
-      }
-
-      chatLog.appendChild(msgDiv);
-      chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
-    };
-
-    logMessage("Agent SDK initialized ✅", "system");
-
-    const sendToOrchestrate = async (conversationId, text) => {
-      try {
-        const res = await fetch(PROXY_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text, conversationId })
-        });
-        if (!res.ok) throw new Error("Proxy request failed");
-        const data = await res.json();
+    (async () => {
     
-        // Show only the first answer text from Orchestrate
-        if (data.answers && Array.isArray(data.answers) && data.answers.length > 0) {
-          logMessage(data.answers[0], "orchestrate", data);
-        } else {
-          logMessage("No answer returned from Orchestrate.", "system");
+      const SDK = lpTag.agentSDK;
+      SDK.init();
+    
+      const chatLog = document.getElementById("chatLog");
+      const input = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
+      const lastSeenMap = {};
+    
+      const scrollIfNeeded = () => {
+        const { scrollTop, scrollHeight, clientHeight } = chatLog;
+        return scrollTop + clientHeight >= scrollHeight - 20;
+      };
+    
+      const formatTimestamp = (ts) => {
+        const diff = Math.floor((Date.now() - ts) / 1000);
+        if (diff < 5) return "just now";
+        if (diff < 60) return `${diff}s ago`;
+        if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+        return new Date(ts).toLocaleTimeString();
+      };
+    
+      const logMessage = (text, type, rawPayload = null) => {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = type;
+        msgDiv.textContent = text;
+    
+        if (type !== "system") {
+          const ts = document.createElement("span");
+          ts.className = "timestamp";
+          ts.dataset.time = Date.now();
+          ts.textContent = formatTimestamp(Date.now());
+          msgDiv.appendChild(ts);
         }
     
-      } catch (err) {
-        logMessage("Error sending to Orchestrate: " + err.message, "system");
-      }
-    };
-
-
-    SDK.bind('chatTranscript.lines', (data) => {
-      const lines = data.newValue || [];
-      const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-
-      if (!(conversationId in lastSeenMap)) {
-        const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
-        lastSeenMap[conversationId] = maxLineId;
-        return;
-      }
-
-      lines.forEach(line => {
-        const lastSeen = lastSeenMap[conversationId];
-        const lineId = line.lineId || Date.now();
-        if (line.source === 'visitor' && line.text && lineId > lastSeen) {
-          logMessage(line.text, "customer");
-          sendToOrchestrate(conversationId, line.text);
-          lastSeenMap[conversationId] = lineId;
+        if (type === "orchestrate") {
+          const conversationId = SDK.chatInfo?.rtSessionId;
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "copyBtn";
+          copyBtn.textContent = "Send to Customer";
+          copyBtn.addEventListener("click", () => {
+            if (!conversationId) return;
+            SDK.command('Write ChatLine', { text, conversationId });
+          });
+          msgDiv.appendChild(copyBtn);
+    
+          // Optional debug
+          if (rawPayload) {
+            const raw = document.createElement("details");
+            const summary = document.createElement("summary");
+            summary.textContent = "View Raw Response";
+            const pre = document.createElement("pre");
+            pre.textContent = JSON.stringify(rawPayload, null, 2);
+            raw.appendChild(summary);
+            raw.appendChild(pre);
+            msgDiv.appendChild(raw);
+          }
         }
+    
+        const atBottom = scrollIfNeeded();
+        chatLog.appendChild(msgDiv);
+        if (atBottom) chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
+      };
+    
+      logMessage("Agent SDK initialized ✅", "system");
+    
+      const sendToOrchestrate = async (conversationId, text) => {
+        // Show typing indicator
+        const typingIndicator = document.createElement("div");
+        typingIndicator.className = "system";
+        typingIndicator.textContent = "Orchestrate is typing...";
+        chatLog.appendChild(typingIndicator);
+        chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
+    
+        try {
+          const res = await fetch(PROXY_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text, conversationId })
+          });
+          if (!res.ok) throw new Error("Proxy request failed");
+          const data = await res.json();
+    
+          // Remove typing indicator
+          typingIndicator.remove();
+    
+          // Show multiple answers if returned
+          if (data.answers && Array.isArray(data.answers) && data.answers.length > 0) {
+            data.answers.forEach(ans => logMessage(ans, "orchestrate", data));
+          } else {
+            logMessage("No answer returned from Orchestrate.", "system");
+          }
+    
+        } catch (err) {
+          typingIndicator.remove();
+          logMessage("Error sending to Orchestrate: " + err.message, "system");
+        }
+      };
+    
+      SDK.bind('chatTranscript.lines', (data) => {
+        const lines = data.newValue || [];
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
+    
+        if (!(conversationId in lastSeenMap)) {
+          const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
+          lastSeenMap[conversationId] = maxLineId;
+          return;
+        }
+    
+        lines.forEach(line => {
+          const lastSeen = lastSeenMap[conversationId];
+          const lineId = line.lineId || Date.now();
+          if (line.source === 'visitor' && line.text && lineId > lastSeen) {
+            logMessage(line.text, "customer");
+            sendToOrchestrate(conversationId, line.text);
+            lastSeenMap[conversationId] = lineId;
+          }
+        });
       });
-    });
+    
+      SDK.bind('conversation.closed', () => {
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
+        logMessage(`Conversation ${conversationId} closed.`, "system");
+        delete lastSeenMap[conversationId];
+      });
+    
+      sendBtn.addEventListener('click', () => {
+        const text = input.value.trim();
+        if (!text) return;
+        const conversationId = SDK.chatInfo?.rtSessionId || 'manual';
+        logMessage(text, "customer");
+        sendToOrchestrate(conversationId, text);
+        input.value = '';
+      });
+    
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendBtn.click();
+      });
+    
+    })();
+    </script>
 
-    SDK.bind('conversation.closed', () => {
-      const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-      logMessage(`Conversation ${conversationId} closed.`, "system");
-      delete lastSeenMap[conversationId];
-    });
-
-    sendBtn.addEventListener('click', () => {
-      const text = input.value.trim();
-      if (!text) return;
-      const conversationId = SDK.chatInfo?.rtSessionId || 'manual';
-      logMessage(text, "customer");
-      sendToOrchestrate(conversationId, text);
-      input.value = '';
-    });
-
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendBtn.click();
-    });
-
-  })();
-  </script>
 </body>
 </html>
