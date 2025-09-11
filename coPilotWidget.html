@@ -105,7 +105,6 @@
         copyBtn.className = "copyBtn";
         copyBtn.textContent = "Send to Customer";
         copyBtn.addEventListener("click", () => {
-          if (!conversationId) return;
           SDK.command('Write ChatLine', { text, conversationId });
         });
         msgDiv.appendChild(copyBtn);
