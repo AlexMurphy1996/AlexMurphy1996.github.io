@@ -28,10 +28,10 @@
 
       log("Agent SDK initialized ✅");
 
-      // --- Proxy configuration ---
+      // Proxy configuration
       const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
 
-      // --- Persistent lastSeenSeqMap ---
+      // Persistent map of last sent lineSeq per conversation
       let lastSeenSeqMap = JSON.parse(localStorage.getItem("lastSeenSeqMap") || "{}");
 
       const saveSeqMap = () => {
@@ -57,29 +57,29 @@
         }
       }
 
-      // --- Helper: process lines incrementally ---
+      // Process lines: only send lines not yet sent
       function processLines(conversationId, lines) {
         const lastSeenSeq = lastSeenSeqMap[conversationId] || 0;
 
         lines.forEach(line => {
-          if (line.source === 'visitor' && line.text) {
-            if (line.lineSeq > lastSeenSeq) {
-              log(`[Customer] ${line.text}`);
-              sendToOrchestrate(conversationId, line.text);
-              lastSeenSeqMap[conversationId] = line.lineSeq;
-              saveSeqMap();
-            }
+          if (line.source === 'visitor' && line.text && line.lineSeq > lastSeenSeq) {
+            log(`[Customer] ${line.text}`);
+            sendToOrchestrate(conversationId, line.text);
+            lastSeenSeqMap[conversationId] = line.lineSeq;
           }
         });
+
+        saveSeqMap();
       }
 
-      // --- Main flow: conversation open ---
+      // Main: conversation opened
       SDK.bind('conversation.info', (data) => {
         if (data.newValue && data.newValue.state === "OPEN") {
           const conversationId = data.newValue.rtSessionId || 'unknown';
           log(`Conversation ${conversationId} opened.`);
 
-          // Bind to chatTranscript.lines — this will fire once with **all existing messages**, then incrementally
+          // Bind to all transcript lines
+          // SDK will fire once with existing lines, then incrementally
           SDK.bind('chatTranscript.lines', (lineData) => {
             const lines = lineData.newValue || [];
             processLines(conversationId, lines);
@@ -87,10 +87,10 @@
         }
       });
 
-      // --- Clean up session on conversation close ---
+      // Clean up on conversation close
       SDK.bind('conversation.closed', (data) => {
         const conversationId = data?.newValue?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. State cleared.`);
+        log(`Conversation ${conversationId} closed. Cleaning state.`);
         delete lastSeenSeqMap[conversationId];
         saveSeqMap();
       });
