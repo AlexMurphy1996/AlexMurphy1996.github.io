@@ -3,9 +3,16 @@
 <head>
   <title>Agent CoPilot Widget</title>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+
     #chatContainer {
-      width: 350px;
-      height: 450px;
+      width: 100%;
+      height: 100%;
       border: 1px solid #ccc;
       border-radius: 8px;
       display: flex;
@@ -13,6 +20,7 @@
       overflow: hidden;
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
+      box-sizing: border-box;
     }
 
     #chatLog {
@@ -27,6 +35,7 @@
       border-radius: 15px;
       max-width: 80%;
       word-wrap: break-word;
+      box-sizing: border-box;
     }
 
     .customer {
@@ -41,7 +50,6 @@
   </style>
 </head>
 <body>
-  <h3>Watsonx Orchestrate Connector</h3>
   <div id="chatContainer">
     <div id="chatLog"></div>
   </div>
@@ -90,14 +98,13 @@
         }
       }
 
-      // --- Track last seen line IDs ---
       const lastSeenMap = {};
 
       SDK.bind('chatTranscript.lines', function(data) {
         const lines = data.newValue || [];
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
-        // First bind: skip old lines
+        // On first bind, skip old lines
         if (!(conversationId in lastSeenMap)) {
           const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
           lastSeenMap[conversationId] = maxLineId;
