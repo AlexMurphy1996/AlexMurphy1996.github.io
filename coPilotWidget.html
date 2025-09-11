@@ -28,8 +28,8 @@
     </div>
   </div>
 
-  <!-- Web Agent SDK for receiving messages -->
-  <script type="text/javascript" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+  <!-- Web Agent SDK -->
+  <script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
   (async () => {
@@ -48,13 +48,12 @@
       awsdk.init();
       console.log("Agent Workspace SDK initialized ✅");
     } else {
-      console.warn("Agent Workspace SDK not available. Buttons to send to customer will be disabled.");
+      console.warn("Agent Workspace SDK not available. 'Send to Customer' buttons will be disabled.");
     }
 
     const chatLog = document.getElementById("chatLog");
     const input = document.getElementById("chatInput");
     const sendBtn = document.getElementById("sendBtn");
-
     const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
     const lastSeenMap = {};
 
@@ -71,11 +70,12 @@
         msgDiv.appendChild(ts);
       }
 
-      if (type === "orchestrate" && awsdk) {
+      if (type === "orchestrate") {
         const copyBtn = document.createElement("button");
         copyBtn.className = "copyBtn";
         copyBtn.textContent = "Send to Customer";
         copyBtn.addEventListener("click", () => {
+          if (!awsdk) return alert("Agent Workspace SDK not available!");
           const conversationId = SDK.chatInfo?.rtSessionId;
           if (!conversationId) return alert("No active conversation!");
           awsdk.writeChatLine({ conversationId, text });
