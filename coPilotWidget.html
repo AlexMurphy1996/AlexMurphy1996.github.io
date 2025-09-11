@@ -47,7 +47,7 @@
         }
       }
 
-      // In-memory map to track the highest lineSeq per conversation
+      // Track highest lineSeq seen in memory
       const lastLineSeqMap = {};
 
       SDK.bind('chatTranscript.lines', (data) => {
@@ -55,13 +55,10 @@
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
         if (!(conversationId in lastLineSeqMap)) {
-          // On first bind, initialize with current highest lineSeq, skip all existing lines
-          const maxSeq = Math.max(...lines.map(l => l.lineSeq || 0), 0);
-          lastLineSeqMap[conversationId] = maxSeq;
-          return; // skip existing lines
+          // First time: set lastLineSeq to 0 so first batch is processed
+          lastLineSeqMap[conversationId] = 0;
         }
 
-        // Send only lines with higher lineSeq (new lines)
         lines.forEach(line => {
           const lastSeq = lastLineSeqMap[conversationId];
           if (line.source === 'visitor' && line.text && (line.lineSeq || 0) > lastSeq) {
