@@ -35,10 +35,6 @@
 
   <script>
   (async () => {
-    if (!window.lpTag || !lpTag.agentSDK) {
-      console.error("Web Agent SDK not available");
-      return;
-    }
 
     const SDK = lpTag.agentSDK;
     SDK.init();
@@ -63,13 +59,14 @@
       }
 
       if (type === "orchestrate") {
+        const conversationId = SDK.chatInfo?.rtSessionId;
         const copyBtn = document.createElement("button");
         copyBtn.className = "copyBtn";
-        copyBtn.textContent = "Send to Customer";
+        copyBtn.textContent = conversationId ? "Send to Customer" : "No active conversation";
+        copyBtn.disabled = !conversationId;
         copyBtn.addEventListener("click", () => {
-          const conversationId = SDK.chatInfo?.rtSessionId;
-          if (!conversationId) return alert("No active conversation!");
-          SDK.command("Write ChatLine", { text });
+          if (!conversationId) return;
+          SDK.command("Write ChatLine", { text, conversationId });
         });
         msgDiv.appendChild(copyBtn);
 
@@ -102,19 +99,17 @@
         if (!res.ok) throw new Error(`Proxy request failed (${res.status})`);
         const data = await res.json();
 
-        // Handle multiple suggestions if present
+        // Extract suggestions properly
         let suggestions = [];
         if (Array.isArray(data.suggestions)) {
-          suggestions = data.suggestions;
+          suggestions = data.suggestions.map(s => s.text || JSON.stringify(s));
         } else if (data.reply || data.response || data.message) {
           suggestions = [data.reply || data.response || data.message];
         } else {
           suggestions = [JSON.stringify(data)];
         }
 
-        suggestions.forEach(suggestion => {
-          logMessage(suggestion, "orchestrate", data);
-        });
+        suggestions.forEach(suggestion => logMessage(suggestion, "orchestrate", data));
 
       } catch (err) {
         logMessage("❌ Error sending to Orchestrate: " + err.message, "system");
@@ -153,7 +148,11 @@
     sendBtn.addEventListener("click", () => {
       const text = input.value.trim();
       if (!text) return;
-      const conversationId = SDK.chatInfo?.rtSessionId || "manual";
+      const conversationId = SDK.chatInfo?.rtSessionId;
+      if (!conversationId) {
+        logMessage("❌ No active conversation to send message", "system");
+        return;
+      }
       logMessage(text, "customer");
       sendToOrchestrate(conversationId, text);
       input.value = "";
