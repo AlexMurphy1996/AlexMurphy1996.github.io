@@ -153,9 +153,8 @@
           copyBtn.className = "copyBtn";
           copyBtn.textContent = "Send to Customer";
           copyBtn.addEventListener("click", () => {       
-            if (conversationId) {
+            if (true) {
               SDK.writeChatLine({
-                conversationId: conversationId,
                 text: text
               });
             } else {
