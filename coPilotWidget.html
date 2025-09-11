@@ -81,11 +81,12 @@
           log(`Conversation ${conversationId} opened.`);
 
           // 1. Fetch full transcript once
-          SDK.get('chatTranscript', (transcriptData) => {
-            const lines = transcriptData?.lines || [];
+         SDK.get('chatTranscript.lines', (res) => {
+            const lines = res?.lines || [];
             log(`Fetched ${lines.length} transcript lines.`);
             processLines(conversationId, lines);
           });
+
 
           // 2. Listen only for new lines after that
           SDK.bind('chatTranscript.lines', (lineData) => {
