@@ -3,93 +3,19 @@
 <head>
   <title>Agent CoPilot Widget</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-    }
-    #chatContainer {
-      width: 100%;
-      height: 100%;
-      border: 1px solid #ccc;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-    }
-    #chatHeader {
-      background-color: #0072C6;
-      color: white;
-      padding: 8px 12px;
-      font-weight: bold;
-      text-align: center;
-    }
-    #chatLog {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-    }
-    #chatInputContainer {
-      display: flex;
-      border-top: 1px solid #ccc;
-    }
-    #chatInput {
-      flex: 1;
-      padding: 8px 10px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
-    #sendBtn {
-      padding: 8px 12px;
-      border: none;
-      background-color: #0072C6;
-      color: white;
-      cursor: pointer;
-    }
-    .message {
-      margin: 5px 0;
-      padding: 8px 12px;
-      border-radius: 15px;
-      max-width: 80%;
-      word-wrap: break-word;
-      display: inline-block;
-      position: relative;
-    }
-    .customer {
-      background-color: #d1e7ff;
-      align-self: flex-start;
-    }
-    .orchestrate {
-      background-color: #e2ffe2;
-      align-self: flex-end;
-    }
-    .system {
-      background-color: #f0f0f0;
-      color: #555;
-      text-align: center;
-      font-size: 0.85em;
-      max-width: 100%;
-      border-radius: 10px;
-    }
-    .timestamp {
-      display: block;
-      font-size: 0.7em;
-      color: #666;
-      margin-top: 2px;
-    }
-    .copyBtn {
-      margin-left: 8px;
-      font-size: 0.7em;
-      padding: 2px 6px;
-      cursor: pointer;
-      background-color: #0072C6;
-      color: white;
-      border: none;
-      border-radius: 3px;
-    }
+    html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+    #chatContainer { width: 100%; height: 100%; border: 1px solid #ccc; display: flex; flex-direction: column; overflow: hidden; font-family: Arial, sans-serif; background-color: #f9f9f9; }
+    #chatHeader { background-color: #0072C6; color: white; padding: 8px 12px; font-weight: bold; text-align: center; }
+    #chatLog { flex: 1; padding: 10px; overflow-y: auto; }
+    #chatInputContainer { display: flex; border-top: 1px solid #ccc; }
+    #chatInput { flex: 1; padding: 8px 10px; border: none; outline: none; font-size: 14px; }
+    #sendBtn { padding: 8px 12px; border: none; background-color: #0072C6; color: white; cursor: pointer; }
+    .message { margin: 5px 0; padding: 8px 12px; border-radius: 15px; max-width: 80%; word-wrap: break-word; display: inline-block; position: relative; }
+    .customer { background-color: #d1e7ff; align-self: flex-start; }
+    .orchestrate { background-color: #e2ffe2; align-self: flex-end; }
+    .system { background-color: #f0f0f0; color: #555; text-align: center; font-size: 0.85em; max-width: 100%; border-radius: 10px; }
+    .timestamp { display: block; font-size: 0.7em; color: #666; margin-top: 2px; }
+    .copyBtn { margin-left: 8px; font-size: 0.7em; padding: 2px 6px; cursor: pointer; background-color: #0072C6; color: white; border: none; border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -128,6 +54,10 @@
     const input = document.getElementById("chatInput");
     const sendBtn = document.getElementById("sendBtn");
 
+    const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
+    const lastSeenMap = {};
+
+    // --- Logging helper ---
     const logMessage = (text, type) => {
       const msgDiv = document.createElement("div");
       msgDiv.className = type;
@@ -140,7 +70,6 @@
         msgDiv.appendChild(ts);
       }
 
-      // Add Orchestrate button for pushing to LP conversation
       if (type === "orchestrate") {
         const copyBtn = document.createElement("button");
         copyBtn.className = "copyBtn";
@@ -159,9 +88,8 @@
 
     logMessage("Agent SDK initialized ✅", "system");
 
-    const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
-
-    async function sendToOrchestrate(conversationId, text) {
+    // --- Send to Orchestrate via proxy ---
+    const sendToOrchestrate = async (conversationId, text) => {
       try {
         const res = await fetch(PROXY_URL, {
           method: "POST",
@@ -174,16 +102,15 @@
       } catch (err) {
         logMessage("Error sending to Orchestrate: " + err.message, "system");
       }
-    }
+    };
 
-    const lastSeenMap = {};
-
-    // Listen for incremental customer messages
+    // --- Listen for incremental customer messages ---
     SDK.bind('chatTranscript.lines', (data) => {
       const lines = data.newValue || [];
       const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
       if (!(conversationId in lastSeenMap)) {
+        // Initialize lastSeen without sending old messages
         const maxLineId = Math.max(...lines.map(l => l.lineId || 0), 0);
         lastSeenMap[conversationId] = maxLineId;
         return;
@@ -206,7 +133,7 @@
       delete lastSeenMap[conversationId];
     });
 
-    // Widget input send button
+    // --- Widget input send button ---
     sendBtn.addEventListener('click', () => {
       const text = input.value.trim();
       if (!text) return;
