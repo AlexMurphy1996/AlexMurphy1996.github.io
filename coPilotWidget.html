@@ -7,7 +7,7 @@
   <h3>Watsonx Orchestrate Connector</h3>
   <div id="log" style="font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 
-  <!-- LivePerson Agent SDK -->
+  <!-- Correct LP SDK -->
   <script type="text/javascript" charset="utf8" src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 
   <script>
@@ -17,6 +17,7 @@
         return;
       }
 
+      // Initialize SDK
       const SDK = lpTag.agentSDK;
       SDK.init();
 
@@ -28,25 +29,21 @@
 
       log("Agent SDK initialized ✅");
 
-      // Proxy URL
-      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
-
-      // Persistent map of last sent lineSeq per conversation
-      let lastSeenSeqMap = JSON.parse(localStorage.getItem("lastSeenSeqMap") || "{}");
-
-      const saveSeqMap = () => {
-        localStorage.setItem("lastSeenSeqMap", JSON.stringify(lastSeenSeqMap));
-      };
+      // --- Proxy configuration ---
+      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent"; 
+      // e.g. https://localhost:3000/orchestrate if testing on Mac with tunneling (ngrok/Cloudflare)
 
       async function sendToOrchestrate(conversationId, text) {
         try {
           const res = await fetch(PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text, conversationId })
+            body: JSON.stringify({message: text})
           });
 
-          if (!res.ok) throw new Error("Proxy request failed");
+          if (!res.ok) {
+            throw new Error("Proxy request failed");
+          }
 
           const data = await res.json();
           log(`→ Orchestrate response: ${JSON.stringify(data)}`);
@@ -55,34 +52,29 @@
         }
       }
 
-      function processLines(conversationId, lines) {
-        const lastSeenSeq = lastSeenSeqMap[conversationId] || 0;
+      // --- Listen for customer messages incrementally ---
+      SDK.bind('chatTranscript.lines', function(data) {
+        const lines = data.newValue || [];
+        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
 
         lines.forEach(line => {
-          if (line.source === 'visitor' && line.text && line.lineSeq > lastSeenSeq) {
-            log(`[Customer] ${line.text}`);
-            sendToOrchestrate(conversationId, line.text);
-            lastSeenSeqMap[conversationId] = line.lineSeq;
+          if (line.source === 'visitor' && line.text) {
+            const lineId = line.lineId || Date.now(); // fallback if no lineId
+            const lastSeen = lastSeenMap[conversationId] || 0;
+
+            if (lineId > lastSeen) {
+              log(`[Customer] ${line.text}`);
+              sendToOrchestrate(conversationId, line.text);
+              lastSeenMap[conversationId] = lineId;
+            }
           }
         });
-
-        saveSeqMap();
-      }
-
-      // Bind to chatTranscript.lines immediately
-      SDK.bind('chatTranscript.lines', (lineData) => {
-        // Only read conversationId here, when SDK.chatInfo is guaranteed to exist
-        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        const lines = lineData.newValue || [];
-        processLines(conversationId, lines);
       });
 
-      // Clean up on conversation close
-      SDK.bind('conversation.closed', () => {
+      // --- Clean up sessions on conversation close ---
+      SDK.bind('conversation.closed', function(data) {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. Clearing state.`);
-        delete lastSeenSeqMap[conversationId];
-        saveSeqMap();
+        log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
       });
 
     })();
