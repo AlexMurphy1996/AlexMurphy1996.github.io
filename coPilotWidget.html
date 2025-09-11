@@ -47,40 +47,6 @@
         }
       }
 
-      // --- Track last seen lines per conversation (in-memory only) ---
+      // --- Track last seen lines per conversation (in-memory) ---
       const lastSeenMap = {};
-
-      // --- Listen for new visitor messages ---
-      SDK.bind('chatTranscript.lines', function(data) {
-        const lines = data.newValue || [];
-        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-
-        // Initialize lastSeenMap if this is the first time
-        if (!(conversationId in lastSeenMap)) {
-          lastSeenMap[conversationId] = 0; // allow processing of first batch
-        }
-
-        // Send only lines with lineId > lastSeen
-        lines.forEach(line => {
-          const lastSeen = lastSeenMap[conversationId];
-          const lineId = line.lineId || Date.now(); // fallback if undefined
-
-          if (line.source === 'visitor' && line.text && lineId > lastSeen) {
-            log(`[Customer] ${line.text}`);
-            sendToOrchestrate(conversationId, line.text);
-            lastSeenMap[conversationId] = lineId;
-          }
-        });
-      });
-
-      // --- Clean up when conversation closes ---
-      SDK.bind('conversation.closed', function() {
-        const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed.`);
-        delete lastSeenMap[conversationId];
-      });
-
-    })();
-  </script>
-</body>
-</html>
+      const widgetStartTime = Date.now(); // ignore older messa
