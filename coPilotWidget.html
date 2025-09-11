@@ -30,15 +30,17 @@
       log("Agent SDK initialized ✅");
 
       // --- Proxy configuration ---
-      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent"; 
-      // e.g. https://localhost:3000/orchestrate if testing on Mac with tunneling (ngrok/Cloudflare)
+      const PROXY_URL = "https://proxyserver-app.1zxfao4b0y0q.eu-gb.codeengine.appdomain.cloud/trigger-agent";
+
+      // Store the last seen lineId per conversation
+      const lastSeenMap = {};
 
       async function sendToOrchestrate(conversationId, text) {
         try {
           const res = await fetch(PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({message: text})
+            body: JSON.stringify({ message: text })
           });
 
           if (!res.ok) {
@@ -74,7 +76,8 @@
       // --- Clean up sessions on conversation close ---
       SDK.bind('conversation.closed', function(data) {
         const conversationId = SDK.chatInfo?.rtSessionId || 'unknown';
-        log(`Conversation ${conversationId} closed. (Tell proxy to clean up if needed)`);
+        delete lastSeenMap[conversationId];
+        log(`Conversation ${conversationId} closed. State cleared.`);
       });
 
     })();
